@@ -1,0 +1,39 @@
+# 默认把文本文件规范化为LF，减少跨平台换行差异
+* text=auto
+
+# Windows批处理文件保持CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 常见源码与配置文件统一使用LF
+*.py text eol=lf
+*.pyw text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.md text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.java text eol=lf
+*.swift text eol=lf
+*.gradle text eol=lf
+*.xml text eol=lf
+*.plist text eol=lf
+*.properties text eol=lf
+*.sh text eol=lf
+
+# 二进制文件禁止换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.bmp binary
+*.jar binary
+*.apk binary
+*.aab binary
+*.ipa binary
+*.zip binary
+*.safetensors binary
+*.onnx binary
+*.jks binary
+*.keystore binary

@@ -1,0 +1,72 @@
+# 私密远程访问配置
+remote_access.json
+.runtime/
+
+# Python缓存
+__pycache__/
+*.pyc
+
+# 模型与训练产物
+models/
+adapters/
+
+# 手机构建缓存
+mobile_app/node_modules/
+mobile_app/android/.gradle/
+mobile_app/android/**/build/
+
+# Android发布签名与密码
+mobile_app/android/signing/
+
+# 临时桌面操作文件
+.devspace-computer/
+
+# Python虚拟环境与工具缓存
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyo
+
+# 日志、崩溃转储与临时文件
+*.log
+*.log.old
+hs_err_pid*.log
+replay_pid*.log
+*.tmp
+*.temp
+*.bak
+.tmp_*
+mobile_app/.tmp_*.js
+nul
+
+# 前端与移动端依赖/缓存
+node_modules/
+mobile_app/ios/App/Pods/
+mobile_app/ios/DerivedData/
+mobile_app/android/local.properties
+
+# 发布包与构建产物
+releases/
+*.apk
+*.aab
+*.ipa
+*.zip
+
+# 密钥、证书与本机环境配置
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+keystore.properties
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

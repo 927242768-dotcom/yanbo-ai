@@ -1,0 +1,12 @@
+{
+  "appId": "com.yanbo.ai",
+  "appName": "彦博 AI",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": ["*"]
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

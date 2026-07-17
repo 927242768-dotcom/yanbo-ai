@@ -1,0 +1,27 @@
+{
+  "current_version": "彦博-v3",
+  "completed_round": 2,
+  "total_training_steps": 650,
+  "history": [
+    {
+      "round": 1,
+      "started_step": 170,
+      "finished_step": 250,
+      "requested_steps": 80,
+      "teacher_status": "完成3条导师样本",
+      "evaluation_status": "数学7/7，基础质量6/6，做题与代码6/6",
+      "release_status": "已升级并发布彦博-v3多模态版本",
+      "completed_at": "2026-07-12"
+    },
+    {
+      "round": 2,
+      "started_step": 250,
+      "finished_step": 650,
+      "requested_steps": 400,
+      "teacher_status": "完成",
+      "evaluation_status": "文字能力通过，图片能力通过",
+      "release_status": "完成",
+      "completed_at": "2026-07-15T01:51:39"
+    }
+  ]
+}

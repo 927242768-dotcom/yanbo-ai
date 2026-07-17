@@ -1,0 +1,13 @@
+torch>=2.11
+transformers>=5.0
+accelerate>=1.0
+peft>=0.19
+huggingface-hub>=1.0
+safetensors>=0.7
+sentencepiece>=0.2
+Pillow>=12.0
+numpy>=2.0
+onnxruntime>=1.27
+rapidocr>=3.9.1
+rapidocr_onnxruntime>=1.2.3
+psutil>=7.0
