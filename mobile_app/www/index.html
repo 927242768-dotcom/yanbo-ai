@@ -64,7 +64,7 @@ svg{display:block}
 .ocr-box{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--panel-soft);overflow:hidden}.ocr-box summary{padding:9px 11px;cursor:pointer;color:var(--muted);font-size:11px}.ocr-box pre{margin:0;padding:0 11px 11px;background:transparent;color:var(--text);border:0;border-radius:0;white-space:pre-wrap;font-family:inherit}
 .composer-wrap{flex:0 0 auto;padding:6px 10px calc(7px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 82%,transparent)}
 .composer{width:min(760px,100%);margin:0 auto;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:0 5px 18px rgba(15,23,42,.07);padding:5px 6px;transition:.18s}.composer:focus-within{border-color:color-mix(in srgb,var(--primary) 38%,var(--line));box-shadow:0 6px 20px rgba(37,99,235,.08)}
-.mode-row{display:flex;align-items:center;padding:1px 2px 5px}.mode-switch{display:grid;grid-template-columns:1fr 1fr;width:min(330px,100%);padding:3px;border-radius:12px;background:var(--panel-soft)}.mode-option{height:30px;padding:0 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:11px;font-weight:720;display:flex;align-items:center;justify-content:center;gap:6px;transition:.16s}.mode-option.active{background:var(--panel);color:var(--text);box-shadow:0 2px 8px rgba(15,23,42,.08)}.mode-option.active[data-mode="thinking"]{color:var(--primary-strong)}.mode-spark{font-size:12px}.mode-option:active{transform:scale(.98)}
+.mode-row{display:flex;align-items:center;padding:1px 2px 5px}.mode-switch{display:grid;grid-template-columns:1fr 1fr 1fr;width:min(430px,100%);padding:3px;border-radius:12px;background:var(--panel-soft)}.mode-option{height:30px;padding:0 8px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:11px;font-weight:720;display:flex;align-items:center;justify-content:center;gap:5px;transition:.16s}.mode-option.active{background:var(--panel);color:var(--text);box-shadow:0 2px 8px rgba(15,23,42,.08)}.mode-option.active[data-mode="thinking"]{color:var(--primary-strong)}.mode-option.active[data-mode="expert"]{color:#7c3aed}.mode-spark{font-size:12px}.mode-option:active{transform:scale(.98)}
 #preview{display:none;align-items:center;gap:10px;padding:3px 4px 9px}.preview-image{width:62px;height:50px;object-fit:cover;border:1px solid var(--line);border-radius:11px}.preview-info{min-width:0;flex:1}.preview-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.preview-info span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
 .composer-row{display:flex;align-items:flex-end;gap:3px}.composer-tools{display:flex;align-items:center;gap:0}.composer-tool{width:34px;height:36px;border:0;border-radius:10px;background:transparent;color:var(--muted);display:grid;place-items:center}.composer-tool:active{background:var(--panel-soft);color:var(--text)}
 #input{flex:1;min-width:0;min-height:38px;max-height:126px;padding:8px 5px;border:0;outline:0;resize:none;background:transparent;line-height:1.45;font-size:13.5px}
@@ -108,8 +108,8 @@ svg{display:block}
     <section id="chat" class="chat-scroll" aria-live="polite"><div id="chatInner" class="chat-inner"></div></section>
     <div class="composer-wrap">
       <div class="composer">
-        <div class="mode-row"><div class="mode-switch" role="tablist" aria-label="回答模式"><button id="modeThinking" class="mode-option active" data-mode="thinking" type="button" role="tab" aria-selected="true"><span class="mode-spark">✦</span>彦博-思考</button><button id="modeFast" class="mode-option" data-mode="fast" type="button" role="tab" aria-selected="false"><span class="mode-spark">⚡</span>彦博-快速</button></div></div>
-        <div id="preview"><img id="previewImg" class="preview-image" alt="图片预览"><div class="preview-info"><strong id="previewName"></strong><span>发送后将识别并分析图片</span></div><button id="remove" class="composer-tool" type="button" aria-label="移除图片"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+        <div class="mode-row"><div class="mode-switch" role="tablist" aria-label="回答模式"><button id="modeThinking" class="mode-option active" data-mode="thinking" type="button" role="tab" aria-selected="true"><span class="mode-spark">✦</span>彦博-思考</button><button id="modeFast" class="mode-option" data-mode="fast" type="button" role="tab" aria-selected="false"><span class="mode-spark">⚡</span>彦博-快速</button><button id="modeExpert" class="mode-option" data-mode="expert" type="button" role="tab" aria-selected="false"><span class="mode-spark">◆</span>彦博-专家</button></div></div>
+        <div id="preview"><img id="previewImg" class="preview-image" alt="图片预览"><div class="preview-info"><strong id="previewName"></strong><span>默认OCR分析；专家视觉启用时同时读取原图</span></div><button id="remove" class="composer-tool" type="button" aria-label="移除图片"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
         <div class="composer-row">
           <div class="composer-tools">
             <button id="camera" class="composer-tool" type="button" aria-label="拍照"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h2l1.3-2h4.4l1.3 2h2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.2"/></svg></button>
@@ -203,7 +203,7 @@ function loadState(){
   try{
     const parsed=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
     if(parsed&&Array.isArray(parsed.conversations)&&parsed.conversations.length){
-      parsed.conversations=parsed.conversations.filter(Boolean).slice(0,MAX_CONVERSATIONS).map(item=>({...item,mode:item.mode==='fast'?'fast':'thinking',messages:Array.isArray(item.messages)?item.messages.slice(-MAX_MESSAGES):[]}));
+      parsed.conversations=parsed.conversations.filter(Boolean).slice(0,MAX_CONVERSATIONS).map(item=>({...item,mode:['fast','thinking','expert'].includes(item.mode)?item.mode:'thinking',messages:Array.isArray(item.messages)?item.messages.slice(-MAX_MESSAGES):[]}));
       if(!parsed.conversations.some(item=>item.id===parsed.activeId))parsed.activeId=parsed.conversations[0].id;
       return parsed;
     }
@@ -254,7 +254,7 @@ function renderConversationList(){
     row.append(main,more);list.appendChild(row);
   }
 }
-function modeLabel(mode){return mode==='fast'?'彦博-快速':'彦博-思考'}
+function modeLabel(mode){return mode==='fast'?'彦博-快速':mode==='expert'?'彦博-专家':'彦博-思考'}
 function renderHeader(){const conversation=activeConversation(),mode=conversation?.mode||'thinking';$('chatTitle').textContent=conversation?.title||'新对话';$('chatSubtitle').textContent=busyRequest&&busyRequest.conversationId===conversation?.id?`${modeLabel(mode)}正在回答`:`${modeLabel(mode)} · 彦博-v3`}
 function renderMessages(){
   const conversation=activeConversation();chatInner.innerHTML='';
@@ -283,9 +283,9 @@ function createMessageNode(message){
 }
 function thinkingHtml(status){return `<div class="thinking"><span class="thinking-orb"></span><span>${escapeHtml(status)}</span><span class="thinking-dots"><i></i><i></i><i></i></span></div>`}
 function actionButton(label,action,id){const button=document.createElement('button');button.type='button';button.className='message-action';button.dataset.action=action;button.dataset.id=id;button.textContent=label;button.onclick=handleMessageAction;return button}
-function updateModeSwitch(){const mode=activeConversation()?.mode==='fast'?'fast':'thinking';for(const button of [$('modeThinking'),$('modeFast')]){const active=button.dataset.mode===mode;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active))}}
+function updateModeSwitch(){const raw=activeConversation()?.mode,mode=['fast','thinking','expert'].includes(raw)?raw:'thinking';for(const button of [$('modeThinking'),$('modeFast'),$('modeExpert')]){const active=button.dataset.mode===mode;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active))}}
 function renderAll(){renderConversationList();renderHeader();renderMessages();updateModeSwitch();updateComposerState()}
-function updateComposerState(){const busy=Boolean(busyRequest);$('send').style.display=busy?'none':'grid';$('stop').classList.toggle('visible',busy);$('camera').disabled=busy;$('gallery').disabled=busy;$('modeThinking').disabled=busy;$('modeFast').disabled=busy;statusEl.textContent=busy?'正在生成回答':'就绪'}
+function updateComposerState(){const busy=Boolean(busyRequest);$('send').style.display=busy?'none':'grid';$('stop').classList.toggle('visible',busy);$('camera').disabled=busy;$('gallery').disabled=busy;$('modeThinking').disabled=busy;$('modeFast').disabled=busy;$('modeExpert').disabled=busy;statusEl.textContent=busy?'正在生成回答':'就绪'}
 function updateAssistantNode(conversation,message){
   if(activeConversation()?.id!==conversation.id){renderConversationList();return}
   let node=[...chatInner.querySelectorAll('[data-id]')].find(item=>item.dataset.id===message.id);
@@ -294,7 +294,7 @@ function updateAssistantNode(conversation,message){
   bubble.innerHTML=message.state==='thinking'?thinkingHtml(message.status||'正在思考……'):renderMarkdown(message.text||'');scrollBottom();
 }
 function switchConversation(id){if(!appState.conversations.some(item=>item.id===id))return;appState.activeId=id;persist();closeDrawer();closePopover();clearImage();renderAll();input.focus()}
-function setMode(mode){if(busyRequest)return;const conversation=activeConversation();if(!conversation)return;conversation.mode=mode==='fast'?'fast':'thinking';conversation.updatedAt=Date.now();persist();updateModeSwitch();renderHeader();showToast(`已切换到${modeLabel(conversation.mode)}`);input.focus()}
+function setMode(mode){if(busyRequest)return;const conversation=activeConversation();if(!conversation)return;conversation.mode=['fast','thinking','expert'].includes(mode)?mode:'thinking';conversation.updatedAt=Date.now();persist();updateModeSwitch();renderHeader();showToast(`已切换到${modeLabel(conversation.mode)}`);input.focus()}
 function newChat(){const current=activeConversation();if(current&&current.messages.length===0){closeDrawer();input.focus();return}const conversation=createConversation();appState.conversations.unshift(conversation);appState.activeId=conversation.id;persist();closeDrawer();clearImage();renderAll();input.focus()}
 function renameConversation(id){const conversation=appState.conversations.find(item=>item.id===id);if(!conversation)return;openDialog({title:'重命名对话',text:'输入一个更容易识别的名称。',value:conversation.title,input:true,confirmText:'保存',onConfirm:value=>{const title=value.trim();if(!title)return false;conversation.title=title.slice(0,40);conversation.updatedAt=Date.now();persist();renderAll();return true}})}
 function clearConversation(id){const conversation=appState.conversations.find(item=>item.id===id);if(!conversation)return;openDialog({title:'清空对话内容？',text:'对话名称会保留，但当前消息无法恢复。',confirmText:'清空',danger:true,onConfirm:()=>{conversation.messages=[];conversation.updatedAt=Date.now();persist();renderAll();resetServerSession(conversation.id);return true}})}
@@ -399,7 +399,7 @@ async function sendMessage(){
   input.value='';autoResize();clearImage();persist();renderAll();await requestAnswer(conversation,userMessage,priorMessages,fullImage,file?.name||'camera.jpg');
 }
 async function requestAnswer(conversation,userMessage,contextMessages,imageData='',filename='图片'){
-  const mode=conversation.mode==='fast'?'fast':'thinking',modeName=modeLabel(mode),requestId=uid('request'),sessionId=remoteSessionId(conversation.id);
+  const mode=['fast','thinking','expert'].includes(conversation.mode)?conversation.mode:'thinking',modeName=modeLabel(mode),requestId=uid('request'),sessionId=remoteSessionId(conversation.id);
   const assistantMessage={id:uid('msg'),role:'assistant',mode,text:'',createdAt:Date.now(),state:'thinking',status:'正在把任务提交到电脑端……',requestId};
   conversation.messages.push(assistantMessage);conversation.updatedAt=Date.now();persist();renderAll();
   const controller=new AbortController();busyRequest={conversationId:conversation.id,assistantId:assistantMessage.id,controller,requestId};updateComposerState();renderHeader();
@@ -540,7 +540,7 @@ window.onYanboNetworkChanged=function(online){const dot=$('connectionDot'),label
 window.onYanboAppStateChanged=function(active){setAppForeground(Boolean(active));if(active){warmConnection();checkUpdate()}};
 
 $('menu').onclick=openDrawer;$('drawerOverlay').onclick=closeDrawer;$('newChat').onclick=newChat;$('headerNew').onclick=newChat;$('chatMenu').onclick=event=>{event.stopPropagation();openTopMenu()};
-$('modeThinking').onclick=()=>setMode('thinking');$('modeFast').onclick=()=>setMode('fast');
+$('modeThinking').onclick=()=>setMode('thinking');$('modeFast').onclick=()=>setMode('fast');$('modeExpert').onclick=()=>setMode('expert');
 $('search').oninput=renderConversationList;
 $('camera').onclick=()=>$('cameraInput').click();$('gallery').onclick=()=>$('galleryInput').click();$('cameraInput').onchange=()=>selectFile($('cameraInput').files[0]);$('galleryInput').onchange=()=>selectFile($('galleryInput').files[0]);$('remove').onclick=clearImage;
 $('send').onclick=sendMessage;$('stop').onclick=()=>busyRequest?.controller.abort();

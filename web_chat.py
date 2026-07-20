@@ -21,20 +21,15 @@ from urllib.parse import parse_qs, urlsplit
 import psutil
 
 from assistant_engine import AssistantEngine, DISPLAY_NAME
+from capability_config import ModeProfile, load_mode_profiles
 from console_utils import configure_utf8_console
-from image_understanding import MAX_IMAGE_BYTES
+from image_understanding import ImageRecognitionError, MAX_IMAGE_BYTES, OCRResult
 from remote_access_config import load_remote_access_config
 
 
 MOBILE_DIR = os.path.join(os.path.dirname(__file__), "mobile")
 MOBILE_UPDATE_PATH = os.path.join(os.path.dirname(__file__), "mobile_update.json")
 RELEASES_DIR = os.path.join(os.path.dirname(__file__), "releases")
-FAST_TEXT_MAX_TOKENS = 700
-THINKING_TEXT_MAX_TOKENS = 1600
-FAST_IMAGE_MAX_TOKENS = 900
-THINKING_IMAGE_MAX_TOKENS = 1800
-
-
 HTML_TEMPLATE = r"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -59,7 +54,7 @@ main{max-width:920px;margin:0 auto;padding:22px}h1{font-size:26px;margin:0 0 5px
 .composer{margin-top:13px;background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:9px;box-shadow:0 3px 12px rgba(0,0,0,.04)}
 #preview{display:none;align-items:center;gap:10px;padding:5px 5px 10px}#preview img{width:72px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 .preview-info{min-width:0;flex:1}.preview-name{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.preview-hint{font-size:12px;color:var(--muted)}
-.input-row{display:flex;gap:8px;align-items:flex-end}textarea{flex:1;resize:none;border:0;outline:0;padding:8px;font:inherit;min-height:48px;max-height:160px}
+.mode-row{display:flex;justify-content:flex-start;padding:1px 2px 8px}.mode-select{height:34px;border:1px solid var(--line);border-radius:9px;background:#f8fafc;color:var(--text);padding:0 10px;font:inherit;font-size:13px;outline:none}.input-row{display:flex;gap:8px;align-items:flex-end}textarea{flex:1;resize:none;border:0;outline:0;padding:8px;font:inherit;min-height:48px;max-height:160px}
 button{border:0;border-radius:10px;cursor:pointer;font-size:14px}.icon-button{height:44px;background:#e7eefb;font-size:15px;color:#1d4ed8;font-weight:650}.attach-button{min-width:112px;padding:0 14px;white-space:nowrap}.send-button{height:44px;padding:0 21px;background:#111827;color:#fff}.send-button:disabled,.icon-button:disabled{opacity:.5;cursor:not-allowed}
 .tools{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px;flex-wrap:wrap}.tool-buttons{display:flex;gap:8px;flex-wrap:wrap}.tools button,.tools a{border:0;border-radius:10px;background:#64748b;color:white;padding:8px 13px;text-decoration:none;font-size:14px;cursor:pointer}.tools #installApp{background:#2563eb;display:none}.tools #downloadAndroid{background:#16a34a;display:none}.status{font-size:13px;color:var(--muted)}
 .update-banner{display:none;margin:10px 0 0;padding:10px 12px;border-radius:10px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;font-size:13px}.update-banner a{color:#1d4ed8;font-weight:700}
@@ -73,7 +68,8 @@ button{border:0;border-radius:10px;cursor:pointer;font-size:14px}.icon-button{he
 <div class="sub">支持流式聊天、图片文字识别、拍照做题、代码与学习答疑。</div>
 <div id="chat"><div class="msg bot"><div class="message-box"><div class="bubble">你好，我是 __DISPLAY_NAME__。你可以直接聊天，也可以上传题目图片让我识别并解答。</div></div></div></div>
 <div class="composer">
-  <div id="preview"><img id="previewImg" alt="图片预览"><div class="preview-info"><div id="previewName" class="preview-name"></div><div class="preview-hint">将识别图片文字并解答题目</div></div><button id="removeImage" class="icon-button" type="button" title="移除图片">×</button></div>
+  <div class="mode-row"><select id="modeSelect" class="mode-select" aria-label="回答模式"><option value="thinking">彦博-思考</option><option value="fast">彦博-快速</option><option value="expert">彦博-专家</option></select></div>
+  <div id="preview"><img id="previewImg" alt="图片预览"><div class="preview-info"><div id="previewName" class="preview-name"></div><div class="preview-hint">默认OCR分析；专家视觉启用时同时读取原图</div></div><button id="removeImage" class="icon-button" type="button" title="移除图片">×</button></div>
   <div class="input-row"><button id="attach" class="icon-button attach-button" type="button" title="上传图片" aria-label="上传图片">＋ 上传图片</button><textarea id="input" placeholder="输入消息；点击上传图片，或按 Ctrl+V 粘贴截图……"></textarea><button id="send" class="send-button" type="button">发送</button></div>
   <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp" hidden>
 </div>
@@ -81,7 +77,7 @@ button{border:0;border-radius:10px;cursor:pointer;font-size:14px}.icon-button{he
 <div class="tools"><div class="tool-buttons"><button id="reset" type="button">清空上下文</button><button id="accessKey" type="button">访问令牌</button><button id="installApp" type="button">安装到手机/桌面</button><a id="downloadAndroid" href="#" download>下载Android应用</a></div><span id="status" class="status">__BACKEND_INFO__</span></div>
 </main>
 <script>
-const chat=document.getElementById('chat'),input=document.getElementById('input'),send=document.getElementById('send');
+const chat=document.getElementById('chat'),input=document.getElementById('input'),send=document.getElementById('send'),modeSelect=document.getElementById('modeSelect');
 const attach=document.getElementById('attach'),fileInput=document.getElementById('fileInput'),preview=document.getElementById('preview');
 const previewImg=document.getElementById('previewImg'),previewName=document.getElementById('previewName'),statusEl=document.getElementById('status');
 const installApp=document.getElementById('installApp'),downloadAndroid=document.getElementById('downloadAndroid'),updateBanner=document.getElementById('updateBanner'),accessKeyButton=document.getElementById('accessKey');
@@ -118,11 +114,11 @@ function scrollBottom(){chat.scrollTop=chat.scrollHeight;}
 function addMessage(role,text,imageUrl=''){const row=document.createElement('div');row.className='msg '+role;const box=document.createElement('div');box.className='message-box';if(imageUrl){const img=document.createElement('img');img.className='message-image';img.src=imageUrl;box.appendChild(img);}const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;box.appendChild(bubble);row.appendChild(box);chat.appendChild(row);scrollBottom();return {row,box,bubble};}
 function clearImage(){selectedFile=null;if(selectedUrl)URL.revokeObjectURL(selectedUrl);selectedUrl='';preview.style.display='none';fileInput.value='';previewImg.removeAttribute('src');}
 function selectImage(file){if(!file)return;if(file.size>15*1024*1024){alert('图片不能超过15MB');return;}if(!file.type.startsWith('image/')){alert('请选择图片文件');return;}clearImage();selectedFile=file;selectedUrl=URL.createObjectURL(file);previewImg.src=selectedUrl;previewName.textContent=file.name;preview.style.display='flex';}
-function setBusy(value,label=''){busy=value;send.disabled=value;attach.disabled=value;document.getElementById('reset').disabled=value;send.textContent=value?'生成中':'发送';statusEl.textContent=label||'__BACKEND_INFO__';}
+function setBusy(value,label=''){busy=value;send.disabled=value;attach.disabled=value;modeSelect.disabled=value;document.getElementById('reset').disabled=value;send.textContent=value?'生成中':'发送';statusEl.textContent=label||'__BACKEND_INFO__';}
 function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('读取图片失败'));reader.readAsDataURL(file);});}
 async function readJsonResponse(response){const data=await response.json();if(!response.ok)throw new Error(data.error||'请求失败');return data;}
 async function consumeStream(response,onEvent){if(!response.ok){let message='请求失败';try{message=(await response.json()).error||message;}catch{}throw new Error(message);}const reader=response.body.getReader(),decoder=new TextDecoder('utf-8');let buffer='';while(true){const {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});let pos;while((pos=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,pos).trim();buffer=buffer.slice(pos+1);if(line)onEvent(JSON.parse(line));}}buffer+=decoder.decode();if(buffer.trim())onEvent(JSON.parse(buffer.trim()));}
-async function submit(){if(busy)return;if(!await ensureAccess())return;const text=input.value.trim();if(!text&&!selectedFile)return;const file=selectedFile;let bot=null;setBusy(true,file?'正在读取图片……':'正在思考……');try{const imageData=file?await fileToDataUrl(file):'';addMessage('user',text||(file?'请识别并解答这张图片。':''),imageData);input.value='';bot=addMessage('bot','');bot.bubble.classList.add('cursor');let endpoint='/chat-stream',payload={message:text};if(file){endpoint='/chat-image-stream';payload={message:text||'请识别并详细解答图片中的题目。',filename:file.name,image:imageData};clearImage();}const response=await fetch(endpoint,{method:'POST',headers:authHeaders(true),body:JSON.stringify(payload)});let received=false;await consumeStream(response,event=>{if(event.type==='stage'){statusEl.textContent=event.text;return;}if(event.type==='ocr'){const details=document.createElement('details');details.className='ocr-details';const summary=document.createElement('summary');summary.textContent=`已识别 ${event.line_count} 行文字，置信度 ${Math.round(event.confidence*100)}%`;const pre=document.createElement('pre');pre.textContent=event.text;details.append(summary,pre);bot.box.appendChild(details);scrollBottom();return;}if(event.type==='delta'){if(!received){bot.bubble.textContent='';received=true;}bot.bubble.textContent+=event.text;scrollBottom();return;}if(event.type==='error')throw new Error(event.error||'生成失败');});if(!received)bot.bubble.textContent='没有生成有效回答。';}catch(error){if(bot)bot.bubble.textContent='处理失败：'+error.message;else addMessage('bot','处理失败：'+error.message);}finally{if(bot)bot.bubble.classList.remove('cursor');setBusy(false,'__BACKEND_INFO__');input.focus();}}
+async function submit(){if(busy)return;if(!await ensureAccess())return;const text=input.value.trim();if(!text&&!selectedFile)return;const file=selectedFile,mode=modeSelect.value||'thinking';let bot=null;setBusy(true,file?'正在读取图片……':'正在思考……');try{const imageData=file?await fileToDataUrl(file):'';addMessage('user',text||(file?'请识别并解答这张图片。':''),imageData);input.value='';bot=addMessage('bot','');bot.bubble.classList.add('cursor');let endpoint='/chat-stream',payload={message:text,mode};if(file){endpoint='/chat-image-stream';payload={message:text||'请识别并详细解答图片中的题目。',filename:file.name,image:imageData,mode};clearImage();}const response=await fetch(endpoint,{method:'POST',headers:authHeaders(true),body:JSON.stringify(payload)});let received=false;await consumeStream(response,event=>{if(event.type==='stage'){statusEl.textContent=event.text;return;}if(event.type==='ocr'){const details=document.createElement('details');details.className='ocr-details';const summary=document.createElement('summary');summary.textContent=`已识别 ${event.line_count} 行文字，置信度 ${Math.round(event.confidence*100)}%`;const pre=document.createElement('pre');pre.textContent=event.text;details.append(summary,pre);bot.box.appendChild(details);scrollBottom();return;}if(event.type==='delta'){if(!received){bot.bubble.textContent='';received=true;}bot.bubble.textContent+=event.text;scrollBottom();return;}if(event.type==='error')throw new Error(event.error||'生成失败');});if(!received)bot.bubble.textContent='没有生成有效回答。';}catch(error){if(bot)bot.bubble.textContent='处理失败：'+error.message;else addMessage('bot','处理失败：'+error.message);}finally{if(bot)bot.bubble.classList.remove('cursor');setBusy(false,'__BACKEND_INFO__');input.focus();}}
 attach.addEventListener('click',()=>fileInput.click());fileInput.addEventListener('change',()=>selectImage(fileInput.files[0]));document.getElementById('removeImage').addEventListener('click',clearImage);send.addEventListener('click',submit);
 input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submit();}});
 function handlePaste(event){const items=[...(event.clipboardData?.items||[])];const item=items.find(value=>value.type&&value.type.startsWith('image/'));if(!item)return;const file=item.getAsFile();if(file){selectImage(file);statusEl.textContent='已粘贴图片，点击发送即可识别并解题';event.preventDefault();}}
@@ -196,24 +192,33 @@ def get_lan_ip() -> str:
 
 
 class ModeEnginePool:
-    """按模式延迟加载模型，并为两种模型提供独立生成锁。"""
+    """按能力模式延迟加载模型，并统一控制本机推理并发。"""
 
     def __init__(self, server_mode: str = "auto") -> None:
         self.server_mode = server_mode
+        self.profiles = load_mode_profiles()
         self._engines: dict[str, AssistantEngine] = {}
         self._engine_guard = threading.Lock()
-        # 两种回答模式共用一个生成锁，避免同时推理时瞬间占满内存。
+        # 本机内存约束下统一串行生成；远程专家后端也保持顺序，避免会话状态交叉。
         self._generation_lock = threading.Lock()
 
     @staticmethod
     def normalize(mode: object) -> str:
-        return "fast" if str(mode).strip().lower() == "fast" else "thinking"
+        candidate = str(mode).strip().lower()
+        return candidate if candidate in {"fast", "thinking", "expert"} else "thinking"
+
+    def profile_for(self, mode: str) -> ModeProfile:
+        return self.profiles[self.normalize(mode)]
+
+    def label_for(self, mode: str) -> str:
+        return self.profile_for(mode).display_name
 
     def backend_for(self, mode: str) -> str:
-        del mode
-        # 自动模式下两种回答模式都复用高性能运行服务，避免额外常驻一套
-        # Transformers 模型。仅显式指定 fallback 时才加载兼容模型。
-        return "fallback" if self.server_mode == "fallback" else "native"
+        if self.server_mode == "fallback":
+            return "fallback"
+        if self.server_mode == "native":
+            return "native"
+        return self.profile_for(mode).effective_backend
 
     def lock_for(self, mode: str) -> threading.Lock:
         del mode
@@ -227,17 +232,29 @@ class ModeEnginePool:
         with self._engine_guard:
             engine = self._engines.get(normalized)
             if engine is None:
-                engine = AssistantEngine(backend=self.backend_for(normalized))
+                profile = self.profile_for(normalized)
+                engine = AssistantEngine(
+                    backend=self.backend_for(normalized),
+                    runtime_model=profile.model,
+                    num_ctx=profile.num_ctx,
+                    remote_api_url=profile.remote_api_url,
+                    remote_api_key=profile.remote_api_key,
+                    remote_model=profile.remote_model,
+                    use_knowledge_base=profile.knowledge_base,
+                    direct_vision=profile.direct_vision,
+                )
                 self._engines[normalized] = engine
         return engine
 
     def status(self) -> dict[str, object]:
-        return {
-            "thinking": self._engines.get("thinking").backend_info if "thinking" in self._engines else "正在准备",
-            "fast": self._engines.get("fast").backend_info if "fast" in self._engines else "正在准备",
-            "thinking_ready": "thinking" in self._engines,
-            "fast_ready": "fast" in self._engines,
-        }
+        payload: dict[str, object] = {}
+        for mode in ("fast", "thinking", "expert"):
+            payload[mode] = (
+                self._engines[mode].backend_info if mode in self._engines else "正在准备"
+            )
+            payload[f"{mode}_ready"] = mode in self._engines
+            payload[f"{mode}_name"] = self.label_for(mode)
+        return payload
 
 
 class StrictThreadingHTTPServer(ThreadingHTTPServer):
@@ -570,7 +587,8 @@ class ChatHandler(BaseHTTPRequestHandler):
         image_bytes: bytes,
         filename: str,
     ) -> None:
-        mode_name = "彦博-快速" if mode == "fast" else "彦博-思考"
+        profile = self.engine_pool.profile_for(mode)
+        mode_name = profile.display_name
         mode_lock = self.engine_pool.lock_for(mode)
         acquired = False
         try:
@@ -604,27 +622,33 @@ class ChatHandler(BaseHTTPRequestHandler):
 
             if image_bytes:
                 self._job_update(request_key, stage="正在识别图片文字……")
-                result = engine.recognize_image(image_bytes)
-                ocr_event = {
-                    "type": "ocr",
-                    "text": result.text,
-                    "confidence": result.confidence,
-                    "line_count": len(result.lines),
-                    "width": result.width,
-                    "height": result.height,
-                }
-                events.append(ocr_event)
-                self._job_update(
-                    request_key,
-                    stage=f"识别完成，{mode_name}正在分析……",
-                    ocr={key: value for key, value in ocr_event.items() if key != "type"},
-                )
+                result = self._recognize_for_request(engine, image_bytes)
+                if result.text:
+                    ocr_event = {
+                        "type": "ocr",
+                        "text": result.text,
+                        "confidence": result.confidence,
+                        "line_count": len(result.lines),
+                        "width": result.width,
+                        "height": result.height,
+                    }
+                    events.append(ocr_event)
+                    self._job_update(
+                        request_key,
+                        stage=f"识别完成，{mode_name}正在分析……",
+                        ocr={key: value for key, value in ocr_event.items() if key != "type"},
+                    )
+                else:
+                    self._job_update(
+                        request_key,
+                        stage=f"未识别到文字，{mode_name}正在直接分析原图……",
+                    )
                 iterator = engine.stream_image_reply(
                     image_bytes=image_bytes,
                     user_text=str(payload.get("message", "")),
                     filename=filename,
-                    max_new_tokens=(FAST_IMAGE_MAX_TOKENS if mode == "fast" else THINKING_IMAGE_MAX_TOKENS),
-                    temperature=0.22 if mode == "fast" else 0.30,
+                    max_new_tokens=profile.image_max_tokens,
+                    temperature=profile.image_temperature,
                     ocr_result=result,
                     response_mode=mode,
                 )
@@ -632,8 +656,8 @@ class ChatHandler(BaseHTTPRequestHandler):
                 self._job_update(request_key, stage=f"{mode_name}正在组织回答……")
                 iterator = engine.stream_reply(
                     str(payload.get("message", "")),
-                    max_new_tokens=(FAST_TEXT_MAX_TOKENS if mode == "fast" else THINKING_TEXT_MAX_TOKENS),
-                    temperature=0.25 if mode == "fast" else 0.38,
+                    max_new_tokens=profile.text_max_tokens,
+                    temperature=profile.text_temperature,
                     response_mode=mode,
                 )
 
@@ -694,6 +718,18 @@ class ChatHandler(BaseHTTPRequestHandler):
             self._try_event(
                 {"type": "done", "model": DISPLAY_NAME, "mode": mode, "replayed": True}
             )
+
+    @staticmethod
+    def _recognize_for_request(
+        engine: AssistantEngine,
+        image_bytes: bytes,
+    ) -> OCRResult:
+        try:
+            return engine.recognize_image(image_bytes)
+        except ImageRecognitionError:
+            if engine.direct_vision_ready:
+                return OCRResult(text="", lines=[], confidence=0.0, width=0, height=0)
+            raise
 
     @staticmethod
     def _decode_image(data_url: str) -> bytes:
@@ -898,8 +934,8 @@ class ChatHandler(BaseHTTPRequestHandler):
                     "model": DISPLAY_NAME,
                     "backend": self.engine_pool.status(),
                     "modes": {
-                        "thinking": "彦博-思考",
-                        "fast": "彦博-快速",
+                        mode: self.engine_pool.label_for(mode)
+                        for mode in ("fast", "thinking", "expert")
                     },
                     "auth_required": bool(self.access_token),
                 },
@@ -1045,7 +1081,8 @@ class ChatHandler(BaseHTTPRequestHandler):
                 self._replay_result(cached, mode)
                 return
 
-            mode_name = "彦博-快速" if mode == "fast" else "彦博-思考"
+            profile = self.engine_pool.profile_for(mode)
+            mode_name = profile.display_name
             connected = self._try_event(
                 {"type": "stage", "text": f"正在连接{mode_name}……", "mode": mode}
             )
@@ -1077,8 +1114,8 @@ class ChatHandler(BaseHTTPRequestHandler):
                         )
                     iterator = engine.stream_reply(
                         message,
-                        max_new_tokens=(FAST_TEXT_MAX_TOKENS if mode == "fast" else THINKING_TEXT_MAX_TOKENS),
-                        temperature=0.25 if mode == "fast" else 0.38,
+                        max_new_tokens=profile.text_max_tokens,
+                        temperature=profile.text_temperature,
                         response_mode=mode,
                     )
                     connected = self._relay_generation(iterator, events, connected)
@@ -1088,30 +1125,35 @@ class ChatHandler(BaseHTTPRequestHandler):
                             {"type": "stage", "text": "正在识别图片文字……", "mode": mode}
                         )
                     result, connected = self._await_task(
-                        lambda: engine.recognize_image(image_bytes),
+                        lambda: self._recognize_for_request(engine, image_bytes),
                         connected,
                         "正在识别图片文字",
                     )
-                    ocr_event = {
-                        "type": "ocr",
-                        "text": result.text,
-                        "confidence": result.confidence,
-                        "line_count": len(result.lines),
-                        "width": result.width,
-                        "height": result.height,
-                    }
-                    events.append(ocr_event)
-                    if connected:
-                        connected = self._try_event(ocr_event)
+                    if result.text:
+                        ocr_event = {
+                            "type": "ocr",
+                            "text": result.text,
+                            "confidence": result.confidence,
+                            "line_count": len(result.lines),
+                            "width": result.width,
+                            "height": result.height,
+                        }
+                        events.append(ocr_event)
+                        if connected:
+                            connected = self._try_event(ocr_event)
+                            connected = self._try_event(
+                                {"type": "stage", "text": f"识别完成，{mode_name}正在分析……", "mode": mode}
+                            ) and connected
+                    elif connected:
                         connected = self._try_event(
-                            {"type": "stage", "text": f"识别完成，{mode_name}正在分析……", "mode": mode}
-                        ) and connected
+                            {"type": "stage", "text": f"未识别到文字，{mode_name}正在直接分析原图……", "mode": mode}
+                        )
                     iterator = engine.stream_image_reply(
                         image_bytes=image_bytes,
                         user_text=message,
                         filename=filename,
-                        max_new_tokens=(FAST_IMAGE_MAX_TOKENS if mode == "fast" else THINKING_IMAGE_MAX_TOKENS),
-                        temperature=0.22 if mode == "fast" else 0.30,
+                        max_new_tokens=profile.image_max_tokens,
+                        temperature=profile.image_temperature,
                         ocr_result=result,
                         response_mode=mode,
                     )

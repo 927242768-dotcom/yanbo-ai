@@ -8,9 +8,11 @@
 - 数学做题与精确计算
 - Python、C、C++、JavaScript、SQL 等代码辅助
 - 图片文字识别与拍照做题
-- 多轮上下文记忆
+- 本地专业知识库自动检索
+- 多轮长上下文记忆
 - 多会话新建、切换、搜索、重命名与删除
-- 彦博-思考与彦博-快速双模式切换
+- 彦博-快速、彦博-思考与彦博-专家三种能力模式
+- 可配置更强本地模型或远程专家模型
 - 流式心跳、断线自动恢复与请求去重
 - Android 原生应用
 - iPhone/iPad 可安装网页应用
@@ -31,6 +33,7 @@
 | `09_publish_mobile_update.bat` | 自动增加应用版本并发布更新 |
 | `11_enable_auto_start.bat` | 重新注册开机后台自启动 |
 | `12_disable_auto_start.bat` | 关闭开机后台自启动 |
+| `13_import_knowledge.bat` | 导入 PDF、Word、图片、文本和代码资料到本地知识库 |
 
 第一次补装运行环境时使用：
 
@@ -43,7 +46,7 @@
 Android 正式安装包：
 
 ```text
-D:\LLM\releases\Yanbo-AI-Android-v1.1.3.apk
+D:\LLM\releases\Yanbo-AI-Android-v1.1.9.apk
 ```
 
 Android 应用商店包：
@@ -85,7 +88,7 @@ D:\LLM\releases\彦博手机访问二维码.png
 当前公网地址：
 
 ```text
-https://laptop-m4o3b2hb.tail692923.ts.net:8443/
+https://laptop-m4o3b2hb.tail692923.ts.net/yanbo
 ```
 
 该地址由 Tailscale Funnel 转发到本机服务。安卓正式应用已内置服务器地址和访问凭据，没有服务器设置入口，打开即可使用移动数据、其他 Wi-Fi 或异地网络连接。
@@ -111,7 +114,7 @@ http://192.168.1.10:7860
 ```text
 应用名：彦博 AI
 包名：com.yanbo.ai
-应用版本：1.1.3
+应用版本：1.1.9
 最低系统：Android 6.0
 目标系统：Android 15
 正式签名：已生成并验证
@@ -169,6 +172,8 @@ Windows 已生成完整 iOS 工程，但不能在 Windows 上完成苹果签名�
 - 点击“＋ 上传图片”
 - 直接粘贴截图
 - OCR 文字与数学符号识别
+- 数学算式自动校验
+- 可选专家视觉后端直接分析原图
 - 流式输出解题过程
 
 命令行示例：
@@ -191,7 +196,9 @@ Windows 已生成完整 iOS 工程，但不能在 Windows 上完成苹果签名�
 04_deep_train.bat
 ```
 
-训练会读取当前微调断点，不会从零开始。当前兼容训练累计约 250 步，长期训练系统会按轮次生成新的数学、代码、逻辑、聊天和 OCR 纠错数据。
+训练会读取当前微调断点，不会从零开始。当前兼容训练累计约 650 步，长期训练系统会按轮次生成新的数学、代码、逻辑、聊天和 OCR 纠错数据。
+
+兼容模型和 LoRA 主要用于故障回退、固定风格与小范围能力补强。复杂推理、长代码和专业知识优先通过高性能运行时、专家模型与本地知识库提升，详细见 `能力升级与专家模式说明.md`。
 
 ## 测试
 
@@ -200,6 +207,7 @@ python evaluate.py
 python evaluate_multimodal.py
 python evaluate_web_upload.py
 python evaluate_mobile_app.py
+python evaluate_capability_upgrade.py
 ```
 
 当前结果：
@@ -209,7 +217,8 @@ python evaluate_mobile_app.py
 图片文字识别：2/2
 图片做题：通过
 网页上传与粘贴：通过
-手机客户端：5/5
+手机客户端：12/12
+能力分层、知识检索与专家后端：5/5
 身份与多轮记忆：通过
 ```
 
@@ -219,12 +228,16 @@ python evaluate_mobile_app.py
 models/                 兼容模型本体
 adapters/               微调参数与训练断点
 data/                   当前训练集、验证集和轮次记录
+knowledge/              用户本地专业知识资料与导入结果
 mobile/                 可安装网页应用资源
 mobile_app/android/     Android 原生工程
 mobile_app/ios/         iOS 原生工程
 mobile_app/tools/       构建、补丁、图标和发布工具
 releases/               Android APK、AAB 与 iOS 工程包
-assistant_engine.py     推理、流式输出、工具和记忆
+assistant_engine.py     推理、流式输出、工具、知识检索和视觉路由
+capability_config.json  快速、思考和专家模式配置
+knowledge_base.py       本地知识库索引与检索
+import_knowledge.py     PDF、Word、图片和文本资料导入
 image_understanding.py  图片增强与文字识别
 web_chat.py             网页、手机服务和应用下载接口
 train_yanbo.py          长期训练编排
@@ -234,4 +247,4 @@ train_yanbo.py          长期训练编排
 
 手机应用是彦博的客户端，模型主体继续在电脑或服务器运行。这样可以保留当前高性能能力，避免把大型模型强行塞入手机后造成体积过大、速度下降和内存不足。
 
-因此使用手机时，电脑或部署彦博的服务器需要保持开机，并运行手机服务。重要题目、代码和事实仍应进行必要核验。
+因此使用手机时，电脑或部署彦博的服务器需要保持开机，并运行手机服务。当前主要本地后端约为 8B 参数模型，0.5B LoRA 模型仅作为兼容回退；更高难度任务可以在专家模式中配置更强模型。重要题目、代码和事实仍应进行必要核验。

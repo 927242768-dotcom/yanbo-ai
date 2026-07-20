@@ -6,9 +6,11 @@ remote_access.json
 __pycache__/
 *.pyc
 
-# 模型与训练产物
+# 模型、训练产物与用户私有知识资料
 models/
 adapters/
+knowledge/*
+!knowledge/README.md
 
 # 手机构建缓存
 mobile_app/node_modules/

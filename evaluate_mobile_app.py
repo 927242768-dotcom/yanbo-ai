@@ -69,12 +69,17 @@ def main() -> None:
             empty_title = page.locator(".empty-state h2").inner_text()
             navigation_ready = page.locator("#newChat").is_visible() and page.locator("#conversationList").is_visible()
             results.append(("多会话主界面", navigation_ready and empty_title == "今天想聊些什么？", empty_title))
-            mode_ready = page.locator("#modeThinking").is_visible() and page.locator("#modeFast").is_visible()
+            mode_ready = all(
+                page.locator(selector).is_visible()
+                for selector in ("#modeThinking", "#modeFast", "#modeExpert")
+            )
             default_thinking = "active" in (page.locator("#modeThinking").get_attribute("class") or "")
             page.locator("#modeFast").click()
             fast_selected = "彦博-快速" in page.locator("#chatSubtitle").inner_text()
+            page.locator("#modeExpert").click()
+            expert_selected = "彦博-专家" in page.locator("#chatSubtitle").inner_text()
             page.locator("#modeThinking").click()
-            results.append(("思考与快速模式切换", mode_ready and default_thinking and fast_selected, "两种模式可见、可切换并按对话保存"))
+            results.append(("三种能力模式切换", mode_ready and default_thinking and fast_selected and expert_selected, "快速、思考与专家模式均可见、可切换并按对话保存"))
             compact_layout = page.evaluate(
                 """() => {
                     const title=parseFloat(getComputedStyle(document.querySelector('.empty-state h2')).fontSize);

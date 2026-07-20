@@ -11,7 +11,7 @@
 - 图片识别与解题
 - 固定服务器自动连接
 - 应用内更新弹窗、下载进度与安装引导
-- 彦博-思考与彦博-快速双模式切换
+- 彦博-快速、彦博-思考与彦博-专家三种能力模式切换
 - 流式心跳、网络切换监听和断线自动恢复
 
 模型主体继续运行在电脑或服务器上，因此不会因手机硬件限制而降低当前彦博-v3的能力。
@@ -30,7 +30,7 @@ tools/      构建、补丁、图标、打包和更新工具
 当前正式包：
 
 ```text
-..\releases\Yanbo-AI-Android-v1.1.3.apk
+..\releases\Yanbo-AI-Android-v1.1.9.apk
 ```
 
 重新构建当前版本：
@@ -70,7 +70,7 @@ android\signing
 应用默认服务器：
 
 ```text
-https://laptop-m4o3b2hb.tail692923.ts.net:8443
+https://laptop-m4o3b2hb.tail692923.ts.net/yanbo
 ```
 
 该地址由 Tailscale Funnel 提供公网访问。电脑登录 Windows 后会自动在后台启动服务并持续检查运行状态。Android 正式包已内置地址与访问凭据，没有服务器设置页面，打开应用即可直接使用。

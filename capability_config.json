@@ -1,0 +1,41 @@
+{
+  "fast": {
+    "display_name": "彦博-快速",
+    "backend": "native",
+    "model": "yanbo-v3:latest",
+    "num_ctx": 8192,
+    "text_max_tokens": 700,
+    "image_max_tokens": 900,
+    "text_temperature": 0.25,
+    "image_temperature": 0.22,
+    "direct_vision": false,
+    "knowledge_base": true
+  },
+  "thinking": {
+    "display_name": "彦博-思考",
+    "backend": "native",
+    "model": "yanbo-v3:latest",
+    "num_ctx": 12288,
+    "text_max_tokens": 1800,
+    "image_max_tokens": 2200,
+    "text_temperature": 0.34,
+    "image_temperature": 0.26,
+    "direct_vision": false,
+    "knowledge_base": true
+  },
+  "expert": {
+    "display_name": "彦博-专家",
+    "backend": "auto",
+    "model": "yanbo-v3:latest",
+    "num_ctx": 16384,
+    "text_max_tokens": 3200,
+    "image_max_tokens": 3600,
+    "text_temperature": 0.2,
+    "image_temperature": 0.18,
+    "direct_vision": false,
+    "knowledge_base": true,
+    "remote_api_url": "",
+    "remote_model": "",
+    "remote_api_key_env": "YANBO_EXPERT_API_KEY"
+  }
+}
