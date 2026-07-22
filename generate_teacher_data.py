@@ -10,6 +10,7 @@ from pathlib import Path
 from assistant_engine import AssistantEngine, DISPLAY_NAME
 from build_quality_dataset import SYSTEM
 from console_utils import configure_utf8_console
+from training_quality import is_teacher_row_usable, is_training_answer_usable
 
 
 PROMPTS = [
@@ -90,18 +91,31 @@ def main() -> None:
 
     existing_rows: list[dict] = []
     completed_prompts: set[str] = set()
+    rejected_existing = 0
     if output.exists():
         with output.open("r", encoding="utf-8") as file:
             for line in file:
                 if not line.strip():
                     continue
-                item = json.loads(line)
+                try:
+                    item = json.loads(line)
+                except (ValueError, TypeError):
+                    rejected_existing += 1
+                    continue
+                if not is_teacher_row_usable(item):
+                    rejected_existing += 1
+                    continue
                 existing_rows.append(item)
                 messages = item.get("messages", [])
                 for message in messages:
                     if message.get("role") == "user":
                         completed_prompts.add(str(message.get("content", "")))
                         break
+    if rejected_existing:
+        with output.open("w", encoding="utf-8") as file:
+            for item in existing_rows:
+                file.write(json.dumps(item, ensure_ascii=False) + "\n")
+        print(f"已移除{rejected_existing}条截断或低质量旧导师样本。")
 
     remaining = [prompt for prompt in selected if prompt not in completed_prompts]
     print(f"正在生成第{args.round}轮导师样本：目标{len(selected)}条，已完成{len(existing_rows)}条，剩余{len(remaining)}条……")
@@ -112,15 +126,31 @@ def main() -> None:
     engine = AssistantEngine(backend="native")
     with output.open("a", encoding="utf-8") as file:
         for index, prompt in enumerate(remaining, start=len(existing_rows) + 1):
-            engine.reset()
-            concise_prompt = prompt + "\n要求：答案准确、结构清楚，尽量控制在400字以内；代码除外。"
-            answer = engine.reply(concise_prompt, max_new_tokens=420, temperature=0.15)
-            if answer.strip():
-                item = make_row(prompt, answer.strip())
+            answer = ""
+            for attempt in range(2):
+                engine.reset()
+                requirement = (
+                    "\n要求：只输出最终答案；准确、完整、结构清楚；普通解释控制在350字以内；"
+                    "代码只保留必要实现、边界处理和复杂度，不写寒暄。"
+                )
+                if attempt:
+                    requirement += "上一次输出不完整，请进一步压缩，但代码块和句子必须完整闭合。"
+                answer = engine.reply(
+                    prompt + requirement,
+                    max_new_tokens=360 if attempt == 0 else 300,
+                    temperature=0.1,
+                ).strip()
+                if is_training_answer_usable(answer):
+                    break
+            if is_training_answer_usable(answer):
+                item = make_row(prompt, answer)
                 file.write(json.dumps(item, ensure_ascii=False) + "\n")
                 file.flush()
                 existing_rows.append(item)
-            print(f"导师样本 {index}/{len(selected)} 完成", flush=True)
+                status = "通过质量检查"
+            else:
+                status = "未通过质量检查，已跳过"
+            print(f"导师样本 {index}/{len(selected)} {status}", flush=True)
 
     print(f"导师数据已保存：{output}，有效样本{len(existing_rows)}条")
 

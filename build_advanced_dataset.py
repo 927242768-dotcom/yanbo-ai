@@ -23,6 +23,7 @@ from build_quality_dataset import (
     uncertainty_examples,
 )
 from console_utils import configure_utf8_console
+from training_quality import is_teacher_row_usable
 
 
 def deduplicate(rows: list[dict]) -> list[dict]:
@@ -327,16 +328,26 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
             file.write(json.dumps(item, ensure_ascii=False) + "\n")
 
 
-def load_teacher_rows(round_number: int) -> list[dict]:
+def load_teacher_rows(round_number: int) -> tuple[list[dict], int]:
     path = Path(f"data/teacher/round_{round_number:03d}.jsonl")
     if not path.exists():
-        return []
+        return [], 0
     rows: list[dict] = []
+    skipped = 0
     with path.open("r", encoding="utf-8") as file:
         for line in file:
-            if line.strip():
-                rows.append(json.loads(line))
-    return rows
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except (ValueError, TypeError):
+                skipped += 1
+                continue
+            if is_teacher_row_usable(item):
+                rows.append(item)
+            else:
+                skipped += 1
+    return rows, skipped
 
 
 def main() -> None:
@@ -365,7 +376,7 @@ def main() -> None:
     train_rows.extend(hard_case_examples(rng, 280))
     train_rows.extend(writing_and_chat_curriculum())
     train_rows.extend(image_ocr_examples() * 4)
-    teacher_rows = load_teacher_rows(args.round)
+    teacher_rows, skipped_teacher_rows = load_teacher_rows(args.round)
     train_rows.extend(teacher_rows)
     train_rows = deduplicate(train_rows)
     rng.shuffle(train_rows)
@@ -377,7 +388,7 @@ def main() -> None:
     write_jsonl(archive, train_rows)
 
     print(f"{DISPLAY_NAME}第{args.round}轮数据完成：训练{len(train_rows)}条，验证{len(val_rows)}条")
-    print(f"本轮导师样本：{len(teacher_rows)}条")
+    print(f"本轮导师样本：有效{len(teacher_rows)}条，质量检查跳过{skipped_teacher_rows}条")
     print(f"训练数据归档：{archive}")
 
 
