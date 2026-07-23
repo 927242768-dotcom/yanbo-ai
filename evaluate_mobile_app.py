@@ -194,6 +194,220 @@ def main() -> None:
             )
             interrupted_page.close()
 
+            legacy_page = context.new_page()
+            legacy_page.route(
+                "**/chat-job",
+                lambda route: route.fulfill(
+                    status=202,
+                    content_type="application/json",
+                    headers={"Access-Control-Allow-Origin": "*"},
+                    body=json.dumps(
+                        {
+                            "request_id": "legacy-fallback-test",
+                            "state": "running",
+                            "mode": "thinking",
+                            "stage": "正在回答",
+                            "text": "",
+                            "revision": 1,
+                            "text_length": 0,
+                        },
+                        ensure_ascii=False,
+                    ),
+                ),
+            )
+            legacy_calls = {"stream": 0, "poll": 0}
+
+            def handle_legacy_job(route) -> None:
+                if "/api/job-stream" in route.request.url:
+                    legacy_calls["stream"] += 1
+                    route.fulfill(
+                        status=404,
+                        content_type="text/plain",
+                        headers={"Access-Control-Allow-Origin": "*"},
+                        body="Not found",
+                    )
+                    return
+                legacy_calls["poll"] += 1
+                route.fulfill(
+                    status=200,
+                    content_type="application/json",
+                    headers={"Access-Control-Allow-Origin": "*"},
+                    body=json.dumps(
+                        {
+                            "request_id": "legacy-fallback-test",
+                            "state": "done",
+                            "mode": "thinking",
+                            "stage": "回答已完成",
+                            "text_delta": "旧版电脑服务会自动改用兼容轮询。",
+                            "text_length": 17,
+                            "revision": 2,
+                        },
+                        ensure_ascii=False,
+                    ),
+                )
+
+            legacy_page.route("**/api/job*", handle_legacy_job)
+            legacy_page.goto(test_url, wait_until="domcontentloaded")
+            legacy_page.locator("#headerNew").click()
+            legacy_page.locator("#input").fill("测试旧服务兼容")
+            legacy_page.locator("#send").click()
+            legacy_page.wait_for_function(
+                "[...document.querySelectorAll('.assistant .bubble')].some(x=>x.textContent.includes('兼容轮询'))",
+                timeout=10_000,
+            )
+            results.append(
+                (
+                    "旧服务自动降级",
+                    legacy_calls["stream"] >= 1 and legacy_calls["poll"] >= 1,
+                    "新客户端发现任务流接口不存在时自动改用旧长轮询",
+                )
+            )
+            legacy_page.close()
+
+            background_page = context.new_page()
+            background_page.route(
+                "**/chat-job",
+                lambda route: route.fulfill(
+                    status=202,
+                    content_type="application/json",
+                    headers={"Access-Control-Allow-Origin": "*"},
+                    body=json.dumps(
+                        {
+                            "request_id": "background-test",
+                            "state": "running",
+                            "mode": "thinking",
+                            "stage": "正在回答",
+                            "text": "",
+                            "revision": 1,
+                            "text_length": 0,
+                        },
+                        ensure_ascii=False,
+                    ),
+                ),
+            )
+            background_page.route(
+                "**/api/job-stream*",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="application/x-ndjson",
+                    headers={"Access-Control-Allow-Origin": "*"},
+                    body=json.dumps(
+                        {
+                            "type": "job",
+                            "job": {
+                                "request_id": "background-test",
+                                "state": "done",
+                                "mode": "thinking",
+                                "stage": "回答已完成",
+                                "text_delta": "后台期间电脑端仍会继续生成，并在完成后保存结果。",
+                                "text_length": 23,
+                                "revision": 2,
+                            },
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n",
+                ),
+            )
+            background_page.goto(test_url, wait_until="domcontentloaded")
+            background_page.locator("#headerNew").click()
+            background_page.evaluate("window.onYanboAppStateChanged(false)")
+            background_page.locator("#input").fill("测试后台回答")
+            background_page.locator("#send").click()
+            background_page.wait_for_function(
+                "[...document.querySelectorAll('.assistant .bubble')].some(x=>x.textContent.includes('后台期间'))",
+                timeout=10_000,
+            )
+            background_text = background_page.locator(".assistant .bubble").last.inner_text()
+            background_page.evaluate("window.onYanboAppStateChanged(true)")
+            results.append(
+                (
+                    "后台期间持续生成",
+                    "后台期间" in background_text and "应用已进入后台" not in background_text,
+                    "客户端处于后台状态时不再暂停任务提交和结果接收",
+                )
+            )
+            background_page.close()
+
+            reload_page = context.new_page()
+            reload_state = {"allow_done": False, "stream_calls": 0}
+            reload_page.route(
+                "**/chat-job",
+                lambda route: route.fulfill(
+                    status=202,
+                    content_type="application/json",
+                    headers={"Access-Control-Allow-Origin": "*"},
+                    body=json.dumps(
+                        {
+                            "request_id": "reload-test",
+                            "state": "running",
+                            "mode": "thinking",
+                            "stage": "正在回答",
+                            "text": "已经生成一部分，",
+                            "revision": 1,
+                            "text_length": 8,
+                        },
+                        ensure_ascii=False,
+                    ),
+                ),
+            )
+
+            def handle_reload_stream(route) -> None:
+                reload_state["stream_calls"] += 1
+                if not reload_state["allow_done"]:
+                    route.abort("connectionfailed")
+                    return
+                route.fulfill(
+                    status=200,
+                    content_type="application/x-ndjson",
+                    headers={"Access-Control-Allow-Origin": "*"},
+                    body=json.dumps(
+                        {
+                            "type": "job",
+                            "job": {
+                                "request_id": "reload-test",
+                                "state": "done",
+                                "mode": "thinking",
+                                "stage": "回答已完成",
+                                "text_delta": "应用重新打开后自动接回同一个任务。",
+                                "text_length": 26,
+                                "revision": 2,
+                            },
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n",
+                )
+
+            reload_page.route("**/api/job-stream*", handle_reload_stream)
+            reload_page.goto(test_url, wait_until="domcontentloaded")
+            reload_page.locator("#headerNew").click()
+            reload_page.locator("#input").fill("测试应用重载接回任务")
+            reload_page.locator("#send").click()
+            reload_page.wait_for_function(
+                "localStorage.getItem('yanbo_mobile_conversations_v3')?.includes('requestId')",
+                timeout=10_000,
+            )
+            reload_state["allow_done"] = True
+            reload_page.reload(wait_until="domcontentloaded")
+            reload_page.wait_for_function(
+                "[...document.querySelectorAll('.assistant .bubble')].some(x=>x.textContent.includes('自动接回'))",
+                timeout=15_000,
+            )
+            reload_page.wait_for_function(
+                "!localStorage.getItem('yanbo_mobile_conversations_v3')?.includes('requestId')",
+                timeout=15_000,
+            )
+            reload_text = reload_page.locator(".assistant .bubble").last.inner_text()
+            results.append(
+                (
+                    "应用重载自动接回任务",
+                    "自动接回" in reload_text and reload_state["stream_calls"] >= 2,
+                    "页面重载后保留请求编号，并自动继续读取未完成任务",
+                )
+            )
+            reload_page.close()
+
             update_page = context.new_page()
             update_page.add_init_script(
                 "window.YanboAndroid={installUpdate:(url,version)=>{window.__yanboUpdateCall={url,version}}};"

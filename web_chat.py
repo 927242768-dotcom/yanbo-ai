@@ -673,7 +673,7 @@ class ChatHandler(BaseHTTPRequestHandler):
                     continue
                 parts.append(str(delta))
                 now = time.monotonic()
-                if now - last_publish >= 0.12:
+                if now - last_publish >= 0.06:
                     self._job_update(
                         request_key,
                         state="running",
@@ -858,6 +858,69 @@ class ChatHandler(BaseHTTPRequestHandler):
             except (OSError, BrokenPipeError, ConnectionResetError, ValueError):
                 return
             return
+
+        if request_path == "/api/job-stream":
+            if not self._authorized(allow_query=True):
+                self._json(401, {"error": "访问令牌无效"})
+                return
+            query = parse_qs(urlsplit(self.path).query)
+            raw_request_id = (query.get("request_id") or [""])[0]
+            request_id = re.sub(r"[^A-Za-z0-9._:-]", "-", raw_request_id)[:180]
+            session_id = self._normalize_session_id((query.get("session") or [""])[0])
+            if not request_id:
+                self._json(400, {"error": "缺少request_id"})
+                return
+            try:
+                revision = max(0, int((query.get("after") or ["0"])[0]))
+                text_offset = max(0, int((query.get("offset") or ["0"])[0]))
+            except (TypeError, ValueError):
+                self._json(400, {"error": "任务流参数无效"})
+                return
+
+            request_key = f"{session_id}:{request_id}"
+            if self._job_snapshot(request_key, text_offset=text_offset) is None:
+                self._json(404, {"error": "任务不存在或服务刚刚重启", "state": "missing"})
+                return
+
+            self._start_stream()
+            try:
+                while True:
+                    snapshot = self._job_wait_snapshot(
+                        request_key,
+                        after_revision=revision,
+                        text_offset=text_offset,
+                        wait_seconds=10.0,
+                    )
+                    if snapshot is None:
+                        self._event(
+                            {
+                                "type": "missing",
+                                "error": "任务不存在或服务刚刚重启",
+                                "state": "missing",
+                            }
+                        )
+                        return
+
+                    state = str(snapshot.get("state", "queued"))
+                    current_revision = int(snapshot.get("revision", 0) or 0)
+                    text_delta = str(snapshot.get("text_delta", ""))
+                    changed = (
+                        current_revision > revision
+                        or bool(text_delta)
+                        or bool(snapshot.get("reset_text"))
+                        or state in {"done", "error", "cancelled"}
+                    )
+                    if changed:
+                        self._event({"type": "job", "job": snapshot})
+                        revision = max(revision, current_revision)
+                        text_offset = max(0, int(snapshot.get("text_length", text_offset) or 0))
+                    else:
+                        self._event({"type": "heartbeat", "time": time.time()})
+
+                    if state in {"done", "error", "cancelled"}:
+                        return
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+                return
 
         if request_path == "/api/job":
             if not self._authorized(allow_query=True):

@@ -149,7 +149,7 @@ svg{display:block}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='1.1.9';
+const APP_VERSION='1.1.10';
 const DEFAULT_SERVER='https://laptop-m4o3b2hb.tail692923.ts.net/yanbo';
 const LEGACY_SERVER='https://laptop-m4o3b2hb.tail692923.ts.net:8443';
 const DEFAULT_ACCESS_TOKEN='__YANBO_ACCESS_TOKEN__';
@@ -171,6 +171,7 @@ const MAX_MESSAGES=80;
 const REQUEST_RETRY_DELAYS=[0,900,1800,3500,6000];
 const REQUEST_CONNECT_TIMEOUT_MS=60000;
 const STREAM_SILENCE_TIMEOUT_MS=22000;
+const JOB_STREAM_CONNECT_TIMEOUT_MS=20000;
 const JOB_LONG_POLL_MS=20000;
 const JOB_FETCH_TIMEOUT_MS=30000;
 const NETWORK_RETRY_MAX_MS=4000;
@@ -346,16 +347,9 @@ function autoResize(){input.style.height='auto';input.style.height=Math.min(148,
 function makeAbortError(){try{return new DOMException('已停止请求','AbortError')}catch{const error=new Error('已停止请求');error.name='AbortError';return error}}
 function setAppForeground(active){
   const next=Boolean(active);if(appForeground===next)return;appForeground=next;
-  if(!next){
-    backgroundEpoch++;
-    if(busyRequest){
-      const conversation=appState.conversations.find(item=>item.id===busyRequest.conversationId),message=conversation?.messages.find(item=>item.id===busyRequest.assistantId);
-      if(message){message.state='thinking';message.status='应用已进入后台，返回后将继续恢复回答……';updateAssistantNode(conversation,message)}
-    }
-    return;
-  }
+  if(!next){backgroundEpoch++;return}
   for(const wake of [...foregroundWaiters])wake();foregroundWaiters.clear();
-  if(busyRequest)showToast('已返回应用，正在恢复回答');
+  if(!busyRequest)resumePendingAnswer();
 }
 function waitUntilForeground(signal){
   if(signal?.aborted)return Promise.reject(makeAbortError());
@@ -398,42 +392,72 @@ async function sendMessage(){
   conversation.messages.push(userMessage);if(conversation.title==='新对话')conversation.title=autoTitle(userMessage);conversation.updatedAt=Date.now();
   input.value='';autoResize();clearImage();persist();renderAll();await requestAnswer(conversation,userMessage,priorMessages,fullImage,file?.name||'camera.jpg');
 }
-async function requestAnswer(conversation,userMessage,contextMessages,imageData='',filename='图片'){
-  const mode=['fast','thinking','expert'].includes(conversation.mode)?conversation.mode:'thinking',modeName=modeLabel(mode),requestId=uid('request'),sessionId=remoteSessionId(conversation.id);
-  const assistantMessage={id:uid('msg'),role:'assistant',mode,text:'',createdAt:Date.now(),state:'thinking',status:'正在把任务提交到电脑端……',requestId};
-  conversation.messages.push(assistantMessage);conversation.updatedAt=Date.now();persist();renderAll();
+function findPendingAnswer(){
+  let selected=null;
+  for(const conversation of appState.conversations){
+    for(let index=0;index<conversation.messages.length;index++){
+      const message=conversation.messages[index];
+      if(message?.role!=='assistant'||!message.requestId)continue;
+      if(!selected||Number(message.createdAt||0)>Number(selected.message.createdAt||0))selected={conversation,message,index};
+    }
+  }
+  return selected;
+}
+function resumePendingAnswer(){
+  if(busyRequest)return;
+  const pending=findPendingAnswer();if(!pending)return;
+  const{conversation,message,index}=pending;let userIndex=index-1;
+  while(userIndex>=0&&conversation.messages[userIndex]?.role!=='user')userIndex--;
+  if(userIndex<0){delete message.requestId;delete message.jobSubmitted;delete message.jobRevision;delete message.jobTextLength;message.state='done';message.text=message.text||'未找到原始问题，无法继续这次回答。';persist();renderAll();return}
+  const userMessage=conversation.messages[userIndex],contextMessages=conversation.messages.slice(0,userIndex);
+  message.state=message.text?'streaming':'thinking';message.status='正在接回电脑端未完成的回答……';persist();
+  if(activeConversation()?.id===conversation.id)updateAssistantNode(conversation,message);else renderConversationList();
+  requestAnswer(conversation,userMessage,contextMessages,userMessage.image||'',userMessage.imageName||'图片',message,Boolean(message.jobSubmitted));
+}
+async function requestAnswer(conversation,userMessage,contextMessages,imageData='',filename='图片',existingAssistant=null,startSubmitted=false){
+  const rawMode=existingAssistant?.mode||conversation.mode,mode=['fast','thinking','expert'].includes(rawMode)?rawMode:'thinking',modeName=modeLabel(mode);
+  const requestId=existingAssistant?.requestId||uid('request'),sessionId=remoteSessionId(conversation.id);
+  const assistantMessage=existingAssistant||{id:uid('msg'),role:'assistant',mode,text:'',createdAt:Date.now(),state:'thinking',status:'正在把任务提交到电脑端……',requestId,jobSubmitted:false};
+  assistantMessage.mode=mode;assistantMessage.requestId=requestId;
+  if(!existingAssistant){conversation.messages.push(assistantMessage);conversation.updatedAt=Date.now();persist();renderAll()}
   const controller=new AbortController();busyRequest={conversationId:conversation.id,assistantId:assistantMessage.id,controller,requestId};updateComposerState();renderHeader();
   const endpoint=imageData?'/chat-image-job':'/chat-job',history=buildHistory(contextMessages);
   const payload=imageData?
     {token:accessToken,session_id:sessionId,request_id:requestId,mode,message:userMessage.text,filename,image:imageData,history}:
     {token:accessToken,session_id:sessionId,request_id:requestId,mode,message:userMessage.text,history};
-  let submitted=false,completed=false,networkFailures=0,lastPersistedText='',lastRevision=0,knownTextLength=0;
+  let submitted=Boolean(startSubmitted),completed=false,networkFailures=0,useLegacyPolling=false,lastPersistedText=assistantMessage.text||'';
+  let lastRevision=Math.max(0,Number(assistantMessage.jobRevision||0)),knownTextLength=Math.max(0,Number(assistantMessage.jobTextLength||Array.from(assistantMessage.text||'').length));
+  const persistProgress=force=>{
+    assistantMessage.jobSubmitted=submitted;assistantMessage.jobRevision=lastRevision;assistantMessage.jobTextLength=knownTextLength;
+    if(force||(assistantMessage.text||'').length-lastPersistedText.length>60){lastPersistedText=assistantMessage.text||'';conversation.updatedAt=Date.now();persist()}
+  };
+  const resetForResubmit=()=>{
+    submitted=false;lastRevision=0;knownTextLength=0;lastPersistedText='';assistantMessage.text='';assistantMessage.state='thinking';assistantMessage.status='电脑端任务记录已重置，正在重新生成完整回答……';persistProgress(true);updateAssistantNode(conversation,assistantMessage);
+  };
   const updateFromJob=job=>{
     if(job.ocr){assistantMessage.ocr={text:job.ocr.text||'',confidence:Number(job.ocr.confidence||0),lineCount:Number(job.ocr.line_count||0)}}
     const revision=Number(job.revision||0);if(Number.isFinite(revision)&&revision>lastRevision)lastRevision=revision;
-    let nextText=assistantMessage.text,textChanged=false;
+    let nextText=assistantMessage.text||'',textChanged=false;
     if(typeof job.text==='string'){
       nextText=job.text;textChanged=nextText!==assistantMessage.text;
     }else if(typeof job.text_delta==='string'){
-      nextText=job.reset_text?job.text_delta:assistantMessage.text+job.text_delta;textChanged=nextText!==assistantMessage.text;
+      nextText=job.reset_text?job.text_delta:(assistantMessage.text||'')+job.text_delta;textChanged=nextText!==assistantMessage.text;
     }
     if(Number.isFinite(Number(job.text_length)))knownTextLength=Math.max(0,Number(job.text_length));
     else knownTextLength=Array.from(nextText).length;
-    if(textChanged){
-      assistantMessage.text=nextText;assistantMessage.state=nextText?'streaming':'thinking';updateAssistantNode(conversation,assistantMessage);
-      if(nextText.length-lastPersistedText.length>80||job.state==='done'){lastPersistedText=nextText;conversation.updatedAt=Date.now();persist()}
-    }else if(!assistantMessage.text){assistantMessage.status=job.stage||`${modeName}正在处理……`;assistantMessage.state='thinking';updateAssistantNode(conversation,assistantMessage)}
+    if(textChanged){assistantMessage.text=nextText;assistantMessage.state=nextText?'streaming':'thinking';assistantMessage.status=job.stage||`${modeName}正在回答……`;updateAssistantNode(conversation,assistantMessage)}
+    else if(!assistantMessage.text){assistantMessage.status=job.stage||`${modeName}正在处理……`;assistantMessage.state='thinking';updateAssistantNode(conversation,assistantMessage)}
+    persistProgress(job.state==='done'||job.state==='error'||job.state==='cancelled');
   };
   try{
     while(!completed){
-      await waitUntilForeground(controller.signal);
       if(!submitted){
         assistantMessage.status=networkFailures?'网络恢复后正在重新提交任务……':'正在把任务提交到电脑端……';assistantMessage.state=assistantMessage.text?'streaming':'thinking';updateAssistantNode(conversation,assistantMessage);
         try{
           const response=await fetchWithServerFallback(endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)},controller.signal,imageData?60000:15000);
           const initial=await response.json().catch(()=>({}));
           if(!response.ok){const failure=new Error(initial.error||`任务提交失败（${response.status}）`);failure.fatal=response.status>=400&&response.status<500;throw failure}
-          submitted=true;networkFailures=0;updateFromJob(initial);
+          submitted=true;networkFailures=0;assistantMessage.jobSubmitted=true;updateFromJob(initial);persistProgress(true);
         }catch(error){
           if(controller.signal.aborted)throw makeAbortError();
           if(error.fatal)throw error;
@@ -444,30 +468,51 @@ async function requestAnswer(conversation,userMessage,contextMessages,imageData=
         }
       }
 
-      await waitUntilForeground(controller.signal);
-      const query=`request_id=${encodeURIComponent(requestId)}&session=${encodeURIComponent(sessionId)}&after=${lastRevision}&offset=${knownTextLength}&wait_ms=${JOB_LONG_POLL_MS}&t=${Date.now()}`;
+      const query=`request_id=${encodeURIComponent(requestId)}&session=${encodeURIComponent(sessionId)}&after=${lastRevision}&offset=${knownTextLength}&t=${Date.now()}`;
       try{
-        const response=await fetchWithServerFallback('/api/job?'+query,{cache:'no-store',headers:authHeaders(false,conversation.id)},controller.signal,JOB_FETCH_TIMEOUT_MS);
-        if(response.status===404){submitted=false;continue}
-        const job=await response.json().catch(()=>({}));
-        if(!response.ok){const failure=new Error(job.error||`获取回答失败（${response.status}）`);failure.fatal=response.status>=400&&response.status<500;throw failure}
-        networkFailures=0;updateFromJob(job);
-        if(job.state==='done'){completed=true;break}
-        if(job.state==='error'){const failure=new Error(job.error||'电脑端生成回答失败');failure.fatal=true;throw failure}
-        if(job.state==='cancelled')throw makeAbortError();
+        if(useLegacyPolling){
+          const legacyQuery=query+`&wait_ms=${JOB_LONG_POLL_MS}`;
+          const response=await fetchWithServerFallback('/api/job?'+legacyQuery,{cache:'no-store',headers:authHeaders(false,conversation.id)},controller.signal,JOB_FETCH_TIMEOUT_MS);
+          if(response.status===404){resetForResubmit();continue}
+          const job=await response.json().catch(()=>({}));
+          if(!response.ok){const failure=new Error(job.error||`获取回答失败（${response.status}）`);failure.fatal=response.status>=400&&response.status<500;throw failure}
+          networkFailures=0;updateFromJob(job);
+          if(job.state==='done'){completed=true;continue}
+          if(job.state==='error'){const failure=new Error(job.error||'电脑端生成回答失败');failure.fatal=true;throw failure}
+          if(job.state==='cancelled')throw makeAbortError();
+          continue;
+        }
+        const response=await fetchWithServerFallback('/api/job-stream?'+query,{cache:'no-store',headers:authHeaders(false,conversation.id)},controller.signal,JOB_STREAM_CONNECT_TIMEOUT_MS);
+        if(response.status===404){
+          const contentType=response.headers.get('content-type')||'';let detail={};
+          if(contentType.includes('application/json')){try{detail=await response.json()}catch{}}
+          if(detail.state==='missing'){resetForResubmit();continue}
+          useLegacyPolling=true;continue;
+        }
+        if(!response.ok){let detail={};try{detail=await response.json()}catch{}const failure=new Error(detail.error||`获取回答失败（${response.status}）`);failure.fatal=response.status>=400&&response.status<500;throw failure}
+        networkFailures=0;let missing=false;
+        await consume(response,event=>{
+          if(event.type==='heartbeat')return;
+          if(event.type==='missing'){missing=true;return}
+          if(event.type!=='job')return;
+          const job=event.job||{};updateFromJob(job);
+          if(job.state==='done'){completed=true;return}
+          if(job.state==='error'){const failure=new Error(job.error||'电脑端生成回答失败');failure.fatal=true;throw failure}
+          if(job.state==='cancelled')throw makeAbortError();
+        });
+        if(missing){resetForResubmit();continue}
+        if(!completed)await waitWithAbort(120,controller.signal);
       }catch(error){
         if(controller.signal.aborted)throw makeAbortError();
         if(error.fatal)throw error;
         networkFailures++;
-        assistantMessage.status=assistantMessage.text?
-          '网络有波动，电脑端仍在继续生成，恢复后会接着显示……':
-          `暂时无法连接电脑，正在自动等待恢复（${networkFailures}）……`;
+        assistantMessage.status=assistantMessage.text?'网络有波动，电脑端仍在继续生成，恢复后会自动接上……':`暂时无法连接电脑，正在自动等待恢复（${networkFailures}）……`;
         assistantMessage.state=assistantMessage.text?'streaming':'thinking';updateAssistantNode(conversation,assistantMessage);
         await waitWithAbort(Math.min(NETWORK_RETRY_MAX_MS,350*Math.pow(2,Math.min(networkFailures-1,4))),controller.signal);
       }
     }
     if(!assistantMessage.text)assistantMessage.text='暂时没有生成有效回答，请再试一次。';
-    assistantMessage.state='done';assistantMessage.status='';delete assistantMessage.requestId;conversation.updatedAt=Date.now();persist();if(activeConversation()?.id===conversation.id)renderMessages();else renderConversationList();
+    assistantMessage.state='done';assistantMessage.status='';delete assistantMessage.requestId;delete assistantMessage.jobSubmitted;delete assistantMessage.jobRevision;delete assistantMessage.jobTextLength;conversation.updatedAt=Date.now();persist();if(activeConversation()?.id===conversation.id)renderMessages();else renderConversationList();
   }catch(error){
     if(error.name==='AbortError'){
       simplePost('/api/job-cancel',{token:accessToken,session_id:sessionId,request_id:requestId}).catch(()=>{});
@@ -475,8 +520,8 @@ async function requestAnswer(conversation,userMessage,contextMessages,imageData=
     }else{
       assistantMessage.state='done';assistantMessage.text=assistantMessage.text||`电脑端生成失败：${error.message||'未知错误'}`;assistantMessage.status='';
     }
-    delete assistantMessage.requestId;conversation.updatedAt=Date.now();persist();if(activeConversation()?.id===conversation.id)renderMessages();else renderConversationList();
-  }finally{busyRequest=null;updateComposerState();renderHeader();input.focus()}
+    delete assistantMessage.requestId;delete assistantMessage.jobSubmitted;delete assistantMessage.jobRevision;delete assistantMessage.jobTextLength;conversation.updatedAt=Date.now();persist();if(activeConversation()?.id===conversation.id)renderMessages();else renderConversationList();
+  }finally{busyRequest=null;updateComposerState();renderHeader();if(appForeground)input.focus();setTimeout(resumePendingAnswer,0)}
 }
 function handleMessageAction(event){const action=event.currentTarget.dataset.action,id=event.currentTarget.dataset.id,conversation=activeConversation(),index=conversation.messages.findIndex(item=>item.id===id),message=conversation.messages[index];if(!message)return;if(action==='copy')copyText(message.text);if(action==='regenerate')regenerateAnswer(index)}
 async function copyText(text){try{await navigator.clipboard.writeText(text);showToast('已复制')}catch{const area=document.createElement('textarea');area.value=text;document.body.appendChild(area);area.select();document.execCommand('copy');area.remove();showToast('已复制')}}
@@ -550,7 +595,7 @@ document.addEventListener('click',event=>{if(!event.target.closest('#chatPopover
 $('dialogCancel').onclick=closeDialog;$('dialog').onclick=event=>{if(event.target===$('dialog'))closeDialog()};$('dialogConfirm').onclick=()=>{if(!dialogHandler){closeDialog();return}const result=dialogHandler($('dialogInput').value);if(result!==false)closeDialog()};$('dialogInput').addEventListener('keydown',event=>{if(event.key==='Enter')$('dialogConfirm').click()});
 $('updateLater').onclick=()=>closeUpdateDialog(true);$('updateNow').onclick=startUpdate;$('updateDialog').onclick=event=>{if(event.target===$('updateDialog'))closeUpdateDialog(true)};
 window.addEventListener('online',()=>{warmConnection();checkUpdate()});window.addEventListener('offline',warmConnection);document.addEventListener('visibilitychange',()=>{setAppForeground(!document.hidden);if(!document.hidden){warmConnection();checkUpdate()}});
-renderAll();autoResize();warmConnection();checkUpdate(false);scheduleUpdateChecks();setInterval(()=>{if(!document.hidden)warmConnection()},30000);input.focus();
+renderAll();autoResize();warmConnection();checkUpdate(false);scheduleUpdateChecks();setTimeout(resumePendingAnswer,0);setInterval(()=>{if(!document.hidden)warmConnection()},30000);input.focus();
 </script>
 </body>
 </html>

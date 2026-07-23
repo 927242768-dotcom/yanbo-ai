@@ -1106,7 +1106,7 @@ class AssistantEngine:
                 contract=contract,
             )
             max_continuations = (
-                3 if response_mode == "expert" else (2 if response_mode == "thinking" else 1)
+                6 if response_mode == "expert" else (5 if response_mode == "thinking" else 4)
             )
             if not contract.allow_continuation:
                 max_continuations = 0
@@ -1213,7 +1213,7 @@ class AssistantEngine:
                 yield from _stream_fixed_text(answer, chunk_size=4)
             else:
                 pieces: list[str] = []
-                max_continuations = 3 if response_mode == "expert" else (2 if response_mode == "thinking" else 1)
+                max_continuations = 6 if response_mode == "expert" else (5 if response_mode == "thinking" else 4)
                 messages = self._messages(prompt, response_mode=response_mode)
                 if vision_enabled:
                     messages[-1]["image_data_urls"] = [_image_data_url(image_bytes)]

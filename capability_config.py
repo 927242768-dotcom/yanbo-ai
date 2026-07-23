@@ -51,8 +51,8 @@ DEFAULTS: dict[str, ModeProfile] = {
         backend="native",
         model="yanbo-v3:latest",
         num_ctx=8192,
-        text_max_tokens=700,
-        image_max_tokens=900,
+        text_max_tokens=4096,
+        image_max_tokens=4096,
         text_temperature=0.25,
         image_temperature=0.22,
         direct_vision=False,
@@ -63,8 +63,8 @@ DEFAULTS: dict[str, ModeProfile] = {
         backend="native",
         model="yanbo-v3:latest",
         num_ctx=12288,
-        text_max_tokens=1800,
-        image_max_tokens=2200,
+        text_max_tokens=8192,
+        image_max_tokens=8192,
         text_temperature=0.34,
         image_temperature=0.26,
         direct_vision=False,
@@ -75,8 +75,8 @@ DEFAULTS: dict[str, ModeProfile] = {
         backend="auto",
         model="yanbo-v3:latest",
         num_ctx=16384,
-        text_max_tokens=3200,
-        image_max_tokens=3600,
+        text_max_tokens=12288,
+        image_max_tokens=12288,
         text_temperature=0.20,
         image_temperature=0.18,
         direct_vision=False,
@@ -113,10 +113,10 @@ def _merge_profile(default: ModeProfile, raw: Any) -> ModeProfile:
         model=str(raw.get("model", default.model)).strip() or default.model,
         num_ctx=_bounded_int(raw.get("num_ctx"), default.num_ctx, 4096, 131072),
         text_max_tokens=_bounded_int(
-            raw.get("text_max_tokens"), default.text_max_tokens, 128, 8192
+            raw.get("text_max_tokens"), default.text_max_tokens, 128, 32768
         ),
         image_max_tokens=_bounded_int(
-            raw.get("image_max_tokens"), default.image_max_tokens, 128, 8192
+            raw.get("image_max_tokens"), default.image_max_tokens, 128, 32768
         ),
         text_temperature=_bounded_float(
             raw.get("text_temperature"), default.text_temperature, 0.0, 1.2
