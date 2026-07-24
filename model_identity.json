@@ -5,5 +5,5 @@
   "runtime_model": "yanbo-v3:latest",
   "fallback_family": "本地兼容模型",
   "description": "由用户命名并在本机运行的多模态中文智能助手，支持图片文字识别与做题",
-  "release_date": "2026-07-12"
+  "release_date": "2026-07-25"
 }

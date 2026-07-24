@@ -7,16 +7,17 @@
   "android_download_url": "/downloads/Yanbo-AI-Android-v1.1.10.apk",
   "ios_download_url": "",
   "release_notes": [
+    "彦博-快速、彦博-思考和彦博-专家统一使用彦博-v3",
     "手机端改用持续任务流，回答显示更连贯、更平滑",
     "退出或切到后台后电脑端继续生成，重新打开应用自动接回原任务",
-    "大幅放宽回答长度限制并增强自动续写，减少回答中途停止"
+    "修复中文句数约束和断线续接回归测试"
   ],
-  "published_at": "2026-07-23T15:16:35",
-  "ios_project_download_url": "/downloads/Yanbo-AI-iOS-Project-v1.1.3.zip",
-  "ios_project_size_bytes": 321995,
-  "ios_project_published_at": "2026-07-15T00:40:09",
-  "mobile_release_download_url": "/downloads/Yanbo-Mobile-Release-v1.1.3.zip",
-  "mobile_release_size_bytes": 3257666,
-  "android_sha256": "9e1915f80642de388fee06ae0f305ce22d19d74af165faaeb820bfc9c4f65f32",
+  "published_at": "2026-07-25T01:07:33",
+  "ios_project_download_url": "/downloads/Yanbo-AI-iOS-Project-v1.1.10.zip",
+  "ios_project_size_bytes": 324878,
+  "ios_project_published_at": "2026-07-25T01:05:02",
+  "mobile_release_download_url": "/downloads/Yanbo-Mobile-Release-v1.1.10.zip",
+  "mobile_release_size_bytes": 3264876,
+  "android_sha256": "033ac3dfde351b7a7f4a854bd2e6309dd5cbc743d43e4b8f9aa1a9218a346050",
   "android_size_bytes": 3252206
 }

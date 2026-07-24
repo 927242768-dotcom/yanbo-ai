@@ -11,7 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "capability_config.json"
-VALID_BACKENDS = {"auto", "native", "fallback", "remote"}
+VALID_BACKENDS = {"native", "fallback"}
 
 
 @dataclass(frozen=True)
@@ -72,7 +72,7 @@ DEFAULTS: dict[str, ModeProfile] = {
     "expert": ModeProfile(
         mode="expert",
         display_name="彦博-专家",
-        backend="auto",
+        backend="native",
         model="yanbo-v3:latest",
         num_ctx=16384,
         text_max_tokens=12288,
@@ -110,7 +110,8 @@ def _merge_profile(default: ModeProfile, raw: Any) -> ModeProfile:
         default,
         display_name=str(raw.get("display_name", default.display_name)).strip() or default.display_name,
         backend=backend,
-        model=str(raw.get("model", default.model)).strip() or default.model,
+        # 三种模式永久使用同一个彦博-v3运行模型，只允许生成参数不同。
+        model=default.model,
         num_ctx=_bounded_int(raw.get("num_ctx"), default.num_ctx, 4096, 131072),
         text_max_tokens=_bounded_int(
             raw.get("text_max_tokens"), default.text_max_tokens, 128, 32768
@@ -126,8 +127,8 @@ def _merge_profile(default: ModeProfile, raw: Any) -> ModeProfile:
         ),
         direct_vision=bool(raw.get("direct_vision", default.direct_vision)),
         knowledge_base=bool(raw.get("knowledge_base", default.knowledge_base)),
-        remote_api_url=str(raw.get("remote_api_url", default.remote_api_url)).strip(),
-        remote_model=str(raw.get("remote_model", default.remote_model)).strip(),
+        remote_api_url="",
+        remote_model="",
         remote_api_key_env=(
             str(raw.get("remote_api_key_env", default.remote_api_key_env)).strip()
             or default.remote_api_key_env
@@ -150,15 +151,4 @@ def load_mode_profiles() -> dict[str, ModeProfile]:
         for mode, default in DEFAULTS.items()
     }
 
-    expert = profiles["expert"]
-    env_url = os.environ.get("YANBO_EXPERT_API_URL", "").strip()
-    env_model = os.environ.get("YANBO_EXPERT_MODEL", "").strip()
-    env_local_model = os.environ.get("YANBO_EXPERT_LOCAL_MODEL", "").strip()
-    if env_url:
-        expert = replace(expert, remote_api_url=env_url)
-    if env_model:
-        expert = replace(expert, remote_model=env_model)
-    if env_local_model:
-        expert = replace(expert, model=env_local_model)
-    profiles["expert"] = expert
     return profiles

@@ -9,7 +9,11 @@ import time
 from assistant_engine import AssistantEngine, DISPLAY_NAME
 from behavior_examples import BehaviorExampleLibrary
 from console_utils import configure_utf8_console
-from response_contract import analyze_response_contract, enforce_response_contract
+from response_contract import (
+    analyze_response_contract,
+    enforce_response_contract,
+    response_contract_satisfied,
+)
 from training_quality import is_training_answer_usable
 
 
@@ -42,6 +46,12 @@ def run_static_checks() -> tuple[int, int]:
     passed += _report(
         "句数硬约束解析",
         contract.exact_sentences == 2 and contract.max_new_tokens is not None,
+    )
+
+    total += 1
+    passed += _report(
+        "相邻中文句数校验",
+        response_contract_satisfied("第一句话。第二句话。", contract),
     )
 
     sample = "下面给你四条：\n1. 第一条。\n2. 第二条。\n3. 第三条。\n4. 多余内容。\n总结。"
@@ -103,7 +113,8 @@ def run_model_checks(mode: str) -> tuple[int, int]:
     for name, prompt, validator in cases:
         engine.reset()
         started = time.perf_counter()
-        answer = engine.reply(prompt, max_new_tokens=700, temperature=0.0)
+        # 当前彦博-v3为20B级本地运行模型，评测只需覆盖短任务，不应放任单题生成过长。
+        answer = engine.reply(prompt, max_new_tokens=320, temperature=0.0)
         elapsed = time.perf_counter() - started
         times.append(elapsed)
         ok = bool(answer.strip()) and validator(answer)

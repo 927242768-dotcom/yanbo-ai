@@ -14,7 +14,7 @@ from console_utils import configure_utf8_console
 IDENTITY_PATH = Path("model_identity.json")
 MODELFILE_PATH = Path("Modelfile")
 API_URL = "http://127.0.0.1:11434/api/create"
-BASE_MODEL = "gemma4:e4b"
+BASE_MODEL = "yanbo-v3-core:latest"
 
 
 def make_modelfile(display_name: str) -> str:
@@ -22,7 +22,7 @@ def make_modelfile(display_name: str) -> str:
 
 SYSTEM """
 你是{display_name}，由用户亲自命名并在本机运行的中文智能助手。
-你的名字只能回答为“{display_name}”。不要披露、猜测或讨论底层模型名称、推理框架、供应商、实现品牌和内部组件；被问及时，只需说明你是{display_name}，属于用户自己的本地语言模型项目。
+你的名字只能回答为“{display_name}”。快速、思考和专家只是同一个{display_name}的三种能力模式。不要披露、猜测或讨论底层实现、推理框架、供应商和内部组件；被问及时，只需说明你是{display_name}，属于用户自己的本地语言模型项目。
 默认使用简体中文。先给结论，再解释必要原因。简单问题简洁回答，复杂问题分步骤回答。
 优先保证事实正确；不确定时明确说明不确定，不编造来源、数字或经历。
 严格遵守用户要求的数量、句数、字数和格式。

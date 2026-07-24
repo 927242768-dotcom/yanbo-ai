@@ -24,7 +24,8 @@ _NUMBER = r"(?:\d{1,2}|[一二两三四五六七八九十]{1,3})"
 _LIST_MARKER = re.compile(
     r"(?m)^\s*(?:\d{1,2}[.、)）]|[一二三四五六七八九十]{1,3}[、.）)]|[-*•])\s*"
 )
-_SENTENCE = re.compile(r".+?(?:[。！？!?](?=\s|$)|$)", re.S)
+# 中文句号后通常直接连接下一句，不应要求标点后必须有空白。
+_SENTENCE = re.compile(r".+?(?:[。！？!?]|$)", re.S)
 
 
 @dataclass(frozen=True)

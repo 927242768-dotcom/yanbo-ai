@@ -25,7 +25,7 @@
   },
   "expert": {
     "display_name": "彦博-专家",
-    "backend": "auto",
+    "backend": "native",
     "model": "yanbo-v3:latest",
     "num_ctx": 16384,
     "text_max_tokens": 12288,
@@ -33,9 +33,6 @@
     "text_temperature": 0.2,
     "image_temperature": 0.18,
     "direct_vision": false,
-    "knowledge_base": true,
-    "remote_api_url": "",
-    "remote_model": "",
-    "remote_api_key_env": "YANBO_EXPERT_API_KEY"
+    "knowledge_base": true
   }
 }

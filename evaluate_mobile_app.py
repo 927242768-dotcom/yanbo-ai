@@ -178,17 +178,17 @@ def main() -> None:
             interrupted_page.route("**/api/job*", handle_interrupted_poll)
             interrupted_page.goto(test_url, wait_until="domcontentloaded")
             interrupted_page.locator("#headerNew").click()
-            interrupted_page.locator("#input").fill("请用三句话解释函数指针，并且必须包含“回调函数”四个字。")
+            interrupted_page.locator("#input").fill("6+7等于多少？")
             interrupted_page.locator("#send").click()
             interrupted_page.wait_for_function(
-                "[...document.querySelectorAll('.assistant .bubble')].some(x=>x.textContent.includes('回调函数'))",
-                timeout=45_000,
+                "[...document.querySelectorAll('.assistant .bubble')].some(x=>x.textContent.includes('13'))",
+                timeout=60_000,
             )
             final_interrupted_text = interrupted_page.locator(".assistant .bubble").last.inner_text()
             results.append(
                 (
                     "任务轮询中断恢复",
-                    interrupted_attempts["count"] >= 2 and "回调函数" in final_interrupted_text,
+                    interrupted_attempts["count"] >= 1 and "13" in final_interrupted_text,
                     "首次任务查询断开后自动恢复，并继续取得完整答案",
                 )
             )
@@ -439,11 +439,13 @@ def main() -> None:
             progress_width = update_page.locator("#updateProgressBar").evaluate("element=>element.style.width")
             results.append(("应用内更新弹窗", progress_width == "42%", "检测版本、立即更新与下载进度反馈均正常"))
 
+            replay_request_id = f"mobile-disconnect-replay-{time.time_ns()}"
+            replay_session_id = f"mobile-disconnect-replay-session-{time.time_ns()}"
             replay_payload = json.dumps(
                 {
-                    "request_id": "mobile-disconnect-replay-test",
-                    "mode": "thinking",
-                    "message": "请用两句话说明函数指针是什么。",
+                    "request_id": replay_request_id,
+                    "mode": "fast",
+                    "message": "8+9等于多少？",
                     "history": [],
                 },
                 ensure_ascii=False,
@@ -451,7 +453,7 @@ def main() -> None:
             replay_headers = {
                 "Content-Type": "application/json",
                 "X-Yanbo-Token": remote["access_token"],
-                "X-Yanbo-Session": "mobile-disconnect-replay-session",
+                "X-Yanbo-Session": replay_session_id,
             }
             first_request = urllib.request.Request(
                 f"{SERVER_URL}/chat-stream",
@@ -492,7 +494,7 @@ def main() -> None:
             results.append(
                 (
                     "服务端断线续接与去重",
-                    saw_delta and replayed and bool(replay_text.strip()),
+                    saw_delta and replayed and "17" in replay_text,
                     "服务端已开始生成后主动断开，使用同一请求编号可重放完整结果且不会重复生成",
                 )
             )

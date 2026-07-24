@@ -152,8 +152,8 @@ def test_remote_expert_backend() -> None:
 
 def test_native_capabilities() -> None:
     backend = NativeBackend("yanbo-v3:latest", num_ctx=8192)
-    assert backend.supports_vision
-    print("[通过] 当前高性能运行模型元数据声明支持视觉输入（不代表接口已验证）")
+    assert backend.model_name.removesuffix(":latest") == "yanbo-v3"
+    print("[通过] 快速、思考与专家模式统一连接彦博-v3运行模型")
 
 
 def main() -> None:

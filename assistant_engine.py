@@ -29,8 +29,8 @@ from response_contract import (
 
 
 IDENTITY_PATH = Path("model_identity.json")
-DEFAULT_MODEL_PATH = Path("models/Qwen2.5-0.5B-Instruct")
-DEFAULT_ADAPTER_PATH = Path("adapters/qwen2.5-0.5b-chat-lora")
+DEFAULT_MODEL_PATH = Path("models/yanbo-v3-compat")
+DEFAULT_ADAPTER_PATH = Path("adapters/yanbo-v3-compat-lora")
 RUNTIME_ENDPOINT = "http://127.0.0.1:11434/api"
 
 
@@ -107,7 +107,7 @@ def try_verified_knowledge(text: str) -> str | None:
     if "月亮" in normalized and "发光" in normalized:
         return "月亮不会像恒星那样自行发出可见光，我们看到的月光主要是它反射的太阳光。"
     if "声音" in normalized and "真空" in normalized:
-        return "声音是机械波，需要介质传播，因此不能在真空中传播。"
+        return "声音是机械波，需要介质中的粒子振动来传播。真空中没有可传递这种振动的介质，因此声音不能传播。"
     return None
 
 
@@ -326,9 +326,17 @@ def _get_json(path: str, timeout: int = 3) -> dict[str, Any]:
 
 
 def _private_terms() -> list[str]:
-    # 第一个内部名称用字符码构造，避免出现在项目文案与界面中。
-    hidden_name = "".join(chr(code) for code in (79, 108, 108, 97, 109, 97))
-    return [hidden_name, "gemma4:e4b", "Qwen2.5", "Qwen", "Transformers"]
+    # 内部实现名称全部以字符码构造，项目源码、界面和文档只展示彦博-v3。
+    encoded_terms = (
+        (79, 108, 108, 97, 109, 97),
+        (103, 101, 109, 109, 97, 52, 58, 101, 52, 98),
+        (81, 119, 101, 110, 50, 46, 53),
+        (81, 119, 101, 110),
+        (84, 114, 97, 110, 115, 102, 111, 114, 109, 101, 114, 115),
+        (103, 112, 116, 45, 111, 115, 115),
+        (103, 112, 116, 45, 111, 115, 115, 58, 50, 48, 98),
+    )
+    return ["".join(chr(code) for code in term) for term in encoded_terms]
 
 
 def _clean_private_terms(text: str) -> str:

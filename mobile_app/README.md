@@ -1,37 +1,53 @@
 # 彦博 AI 原生手机客户端
 
-本目录包含彦博 AI 的 Android 与 iOS 原生客户端工程。
+本目录包含彦博-v3的 Android 与 iOS 原生客户端工程。
 
-手机端负责：
+客户端只展示一个 AI 身份：**彦博-v3**。`彦博-快速`、`彦博-思考`、`彦博-专家` 是同一个彦博-v3的三种运行参数，不是不同模型。
 
-- 多会话新建、切换、搜索、重命名、清空和删除
-- 流式聊天与即时思考状态
-- 拍照做题
-- 相册图片上传
-- 图片识别与解题
-- 固定服务器自动连接
-- 应用内更新弹窗、下载进度与安装引导
-- 彦博-快速、彦博-思考与彦博-专家三种能力模式切换
-- 流式心跳、网络切换监听和断线自动恢复
+## 当前版本
 
-模型主体继续运行在电脑或服务器上，因此不会因手机硬件限制而降低当前彦博-v3的能力。
+```text
+应用版本：1.1.10
+Android包名：com.yanbo.ai
+最低Android：6.0
+目标Android：15
+```
+
+当前发布文件：
+
+```text
+..\releases\Yanbo-AI-Android-v1.1.10.apk
+..\releases\Yanbo-AI-Android-v1.1.10.aab
+..\releases\Yanbo-AI-iOS-Project-v1.1.10.zip
+..\releases\Yanbo-Mobile-Release-v1.1.10.zip
+```
 
 ## 目录
 
 ```text
-android/    Android Studio/Gradle工程
+android/    Android Studio与Gradle工程
 ios/        Xcode工程
-www/        两端共享的手机界面
+www/        Android和iOS共享界面
 tools/      构建、补丁、图标、打包和更新工具
 ```
 
+## 已实现能力
+
+- 多会话新建、切换、搜索、重命名、清空和删除；
+- 彦博-快速、彦博-思考、彦博-专家三种模式；
+- 流式文字聊天和即时状态反馈；
+- 拍照与相册图片上传；
+- OCR结果展示和图片做题；
+- Markdown、代码块、复制和重新生成；
+- 固定服务器自动连接；
+- 主地址与备用地址自动切换；
+- 网络中断自动重试；
+- 后台期间电脑端继续生成；
+- 页面或应用重载后自动接回任务；
+- 请求编号去重，避免重复生成；
+- 应用内更新弹窗、下载进度和安装引导。
+
 ## Android
-
-当前正式包：
-
-```text
-..\releases\Yanbo-AI-Android-v1.1.9.apk
-```
 
 重新构建当前版本：
 
@@ -45,58 +61,56 @@ tools/      构建、补丁、图标、打包和更新工具
 ..\09_publish_mobile_update.bat
 ```
 
-Android固定发布签名：
+固定发布签名：
 
 ```text
 android\signing
 ```
 
-必须安全备份整个签名目录，不要公开其中的密码配置。
+签名目录不能公开，也不能丢失；后续版本必须继续使用同一签名才能覆盖安装。
 
 ## iOS
 
-当前工程包：
+当前 iOS 工程包：
 
 ```text
-..\releases\Yanbo-AI-iOS-Project-v1.1.3.zip
+..\releases\Yanbo-AI-iOS-Project-v1.1.10.zip
 ```
 
-工程已加入相机、相册、局域网和HTTP/HTTPS连接说明。最终签名与IPA发布需要在macOS/Xcode中选择自己的Apple开发团队。
-
-苹果设备也可以使用公网HTTPS地址安装PWA。
+工程已经包含相机、相册、局域网和网络访问说明。最终签名与 IPA 发布需要在 macOS/Xcode 中完成。
 
 ## 服务地址
 
-应用默认服务器：
+标准公网地址：
 
 ```text
 https://laptop-m4o3b2hb.tail692923.ts.net/yanbo
 ```
 
-该地址由 Tailscale Funnel 提供公网访问。电脑登录 Windows 后会自动在后台启动服务并持续检查运行状态。Android 正式包已内置地址与访问凭据，没有服务器设置页面，打开应用即可直接使用。
+电脑端模型主体保持为 `yanbo-v3:latest`。手机只是客户端，因此模型升级、知识库升级和服务端逻辑升级通常不需要重新安装应用。
 
 ## 手动同步工程
 
-```bash
+```text
 npm install
 npx cap sync
 python tools/patch_android_project.py
 python tools/inject_remote_config.py
 ```
 
-补丁工具会恢复：
-
-- 国内构建镜像
-- Java 17兼容
-- Android局域网HTTP访问
-- Gradle下载镜像
-
 ## 自动测试
 
-根目录运行：
+在项目根目录运行：
 
-```bash
+```text
+python verify_identity.py
 python evaluate_mobile_app.py
 ```
 
-当前模拟手机测试结果：5/5通过。
+测试覆盖多会话、三模式、紧凑布局、文字聊天、图片识别、断线重连、任务流、旧服务兼容、后台生成、重载续接、应用内更新和服务端去重。
+
+当前完整手机端回归结果：
+
+```text
+15/15 通过
+```
