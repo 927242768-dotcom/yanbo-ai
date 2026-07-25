@@ -39,6 +39,10 @@ env/
 .ruff_cache/
 *.pyo
 
+# 训练评测分片属于可重新生成的中间产物，只提交完整汇总报告
+training_reports/round4_*_part*.json
+training_reports/round4_*_case*.json
+
 # 日志、崩溃转储与临时文件
 *.log
 *.log.old

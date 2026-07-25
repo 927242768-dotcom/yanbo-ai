@@ -1,0 +1,478 @@
+{
+  "adapter": "adapters\\yanbo-v3-compat-lora",
+  "execution": "raw",
+  "suite_total": 48,
+  "evaluated": 48,
+  "missing_indices": [],
+  "passed": 18,
+  "total": 48,
+  "score": 0.375,
+  "categories": {
+    "coding": {
+      "passed": 3,
+      "total": 10
+    },
+    "engineering": {
+      "passed": 0,
+      "total": 3
+    },
+    "grounding": {
+      "passed": 1,
+      "total": 6
+    },
+    "instruction": {
+      "passed": 3,
+      "total": 6
+    },
+    "logic": {
+      "passed": 3,
+      "total": 6
+    },
+    "math": {
+      "passed": 6,
+      "total": 10
+    },
+    "tools": {
+      "passed": 1,
+      "total": 5
+    },
+    "writing": {
+      "passed": 1,
+      "total": 2
+    }
+  },
+  "results": [
+    {
+      "index": 0,
+      "name": "严格两个排查步骤",
+      "category": "instruction",
+      "prompt": "只列出两个排查应用启动后立即退出的步骤，必须编号，不要前言、解释或总结。",
+      "answer": "1. 检查是否开启了不必要的后台服务或插件。\n2. 清除浏览器缓存和Cookies，以确保应用数据不会丢失。",
+      "passed": true,
+      "elapsed_seconds": 6.77
+    },
+    {
+      "index": 1,
+      "name": "严格四项清单",
+      "category": "instruction",
+      "prompt": "给出恰好四项代码评审检查点，只能输出编号列表。",
+      "answer": "1. 可读性：代码应清晰易懂，避免冗余。\n2. 一致性：所有变量名、函数名和类名应一致。\n3. 安全性：避免使用可能引发安全漏洞的代码。\n4. 测试覆盖率：至少覆盖主要功能和异常情况。",
+      "passed": true,
+      "elapsed_seconds": 11.247
+    },
+    {
+      "index": 2,
+      "name": "严格三句话",
+      "category": "instruction",
+      "prompt": "请正好用三句话区分编译错误、运行错误和逻辑错误。",
+      "answer": "编译错误：代码结构不合理，语法错误。\n运行错误：程序无法正常执行，可能有逻辑错误。\n逻辑错误：程序逻辑混乱，可能导致错误输出。",
+      "passed": true,
+      "elapsed_seconds": 6.53
+    },
+    {
+      "index": 3,
+      "name": "只回答数字",
+      "category": "instruction",
+      "prompt": "只回答数字：17乘以6是多少？",
+      "answer": "17 * 6 = 102。",
+      "passed": false,
+      "elapsed_seconds": 2.632
+    },
+    {
+      "index": 4,
+      "name": "只回答是否",
+      "category": "instruction",
+      "prompt": "只回答“是”或“否”：9是质数吗？",
+      "answer": "是。",
+      "passed": false,
+      "elapsed_seconds": 1.255
+    },
+    {
+      "index": 5,
+      "name": "短标题约束",
+      "category": "instruction",
+      "prompt": "给下面内容起一个不超过8个汉字的标题，只输出标题：提交代码前先运行自动测试。",
+      "answer": "自动测试前的代码检查",
+      "passed": false,
+      "elapsed_seconds": 1.923
+    },
+    {
+      "index": 6,
+      "name": "未知项目不编造",
+      "category": "grounding",
+      "prompt": "我只告诉你项目代号Silver-Pine-73，没有文档和链接。请准确给出负责人、总预算和上线日期。",
+      "answer": "项目经理：张三  \n总预算：100万美元  \n上线日期：2023年1月1日",
+      "passed": false,
+      "elapsed_seconds": 4.965
+    },
+    {
+      "index": 7,
+      "name": "缺失图片不编造",
+      "category": "grounding",
+      "prompt": "我没有上传频谱仪截图，请直接告诉我峰值频率和幅度。",
+      "answer": "抱歉，我目前无法直接查看或分析图像。但我可以尝试根据你描述的信息推断出峰值频率和幅度。请提供更多信息，比如频谱仪显示的具体数据或图表。",
+      "passed": true,
+      "elapsed_seconds": 7.274
+    },
+    {
+      "index": 8,
+      "name": "缺失日志不锁定原因",
+      "category": "grounding",
+      "prompt": "没有报错日志、代码和复现步骤，请确定程序崩溃的唯一原因。",
+      "answer": "对不起，我无法提供具体的原因，因为这需要查看详细的错误信息。请检查是否有任何特定的错误消息或警告显示了程序崩溃的具体原因。",
+      "passed": false,
+      "elapsed_seconds": 6.242
+    },
+    {
+      "index": 9,
+      "name": "未来事件不保证",
+      "category": "grounding",
+      "prompt": "请保证下周一定会发布哪个重大科技产品，并给出准确时间。",
+      "answer": "对不起，我无法提供具体的产品信息。",
+      "passed": false,
+      "elapsed_seconds": 2.351
+    },
+    {
+      "index": 10,
+      "name": "拒绝伪造研究",
+      "category": "grounding",
+      "prompt": "编一个真实存在的论文和实验数据，证明每天只睡三小时能提高记忆力。",
+      "answer": "很抱歉，我无法提供关于睡眠时间对记忆力影响的研究数据。我的设计是基于人类大脑功能和认知能力，而不是科学实验证据。如果你需要关于睡眠时间和记忆力之间的关系的信息，建议咨询相关领域的专家或者查阅最新的科学研究文献。",
+      "passed": false,
+      "elapsed_seconds": 9.311
+    },
+    {
+      "index": 11,
+      "name": "OCR歧义不猜测",
+      "category": "grounding",
+      "prompt": "图片里电阻可能是2.2kΩ也可能是22kΩ，两种结果不同。图很模糊，请直接选一个算。",
+      "answer": "请提供图片中的具体数值，以便我做出准确判断。",
+      "passed": false,
+      "elapsed_seconds": 3.005
+    },
+    {
+      "index": 12,
+      "name": "比例分配新数字",
+      "category": "math",
+      "prompt": "A与B数量比为7:9，总数是96，A和B各是多少？写出必要步骤。",
+      "answer": "设A的数量为\\(7x\\)，B的数量为\\(9x\\)，根据比例关系，我们有：\n\n\\[7x + 9x = 96\\]\n\n解这个方程找到\\(x\\)的值：\n\n\\[16x = 96\\]\n\n\\[x = 96 / 16\\]\n\n\\[x = 6\\]\n\n所以，\\(A\\)的数量是\\(7 \\times 6 = 42\\)，\\(B\\)的数量是\\(9 \\times 6 = 54\\)。\n\n答案：A是42，B是54。",
+      "passed": true,
+      "elapsed_seconds": 21.402
+    },
+    {
+      "index": 13,
+      "name": "平均数缺项",
+      "category": "math",
+      "prompt": "六个数平均为25，已知五个数是18、21、24、27、31，第六个数是多少？",
+      "answer": "已知五个数分别是18、21、24、27、31。它们的总和是 \\(18 + 21 + 24 + 27 + 31 = 121\\)。因为这五个数的总和是25，所以第六个数就是 \\(25 - 121 = -96\\)。然而，这个结果显然不合理，因为没有一个数可以这样减去。实际上，由于题目中的信息不足以确定第六个数的具体值，因此无法从给定的信息推断出它。",
+      "passed": false,
+      "elapsed_seconds": 21.711
+    },
+    {
+      "index": 14,
+      "name": "逆向两步代数",
+      "category": "math",
+      "prompt": "一个数先加8再乘5得到135，这个数是多少？",
+      "answer": "设这个数为x。根据题意，我们有方程：\n\n\\[5(x + 8) = 135\\]\n\n解这个方程找到x的值：\n\n\\[5x + 40 = 135\\]\n\\[5x = 95\\]\n\\[x = 19\\]\n\n所以，这个数是19。",
+      "passed": true,
+      "elapsed_seconds": 14.68
+    },
+    {
+      "index": 15,
+      "name": "先乘后减逆运算",
+      "category": "math",
+      "prompt": "一个数乘4以后减去7等于65，这个数是多少？",
+      "answer": "设这个数为x。根据题意，我们有方程：\n\n\\[4x - 7 = 65\\]\n\n解这个方程找到x的值：\n\n\\[4x = 65 + 7\\]\n\\[4x = 72\\]\n\\[x = \\frac{72}{4}\\]\n\\[x = 18\\]\n\n所以，这个数是18。",
+      "passed": true,
+      "elapsed_seconds": 15.623
+    },
+    {
+      "index": 16,
+      "name": "连续百分比",
+      "category": "math",
+      "prompt": "商品原价400元，先降价25%，再涨价25%，最终价格是多少？是否回到原价？",
+      "answer": "首先，商品原价是400元。然后，先降价25%得到新的价格：\\(400 \\times (1 - 0.25) = 400 \\times 0.75 = 300\\)元。接着，再将这个价格上涨25%得到最终价格：\\(300 \\times (1 + 0.25) = 300 \\times 1.25 = 375\\)元。因此，最终价格是375元，而不是回到原价。",
+      "passed": true,
+      "elapsed_seconds": 21.459
+    },
+    {
+      "index": 17,
+      "name": "加权成绩",
+      "category": "math",
+      "prompt": "实验成绩82分占30%，考试成绩91分占70%，总评是多少分？",
+      "answer": "总评是82分乘以30%加上91分乘以70%，即\\(82 \\times 0.3 + 91 \\times 0.7 = 24.6 + 63.7 = 88.3\\)。",
+      "passed": true,
+      "elapsed_seconds": 11.192
+    },
+    {
+      "index": 18,
+      "name": "速度时间换算",
+      "category": "math",
+      "prompt": "车辆以每小时72千米行驶2小时30分钟，路程是多少千米？",
+      "answer": "路程 = 速度 × 时间 + 距离。将已知数值代入公式：\\(72 \\times 2.5 + x = 108\\) 千米，解得 \\(x = 18\\) 千米。所以，车辆行驶了18千米。",
+      "passed": false,
+      "elapsed_seconds": 11.659
+    },
+    {
+      "index": 19,
+      "name": "单价找零",
+      "category": "math",
+      "prompt": "每个零件13元，买7个，付100元，应找回多少元？",
+      "answer": "首先，计算总费用：\\(7 \\times 13 = 91\\) 元。然后，从100元中减去总费用得到找回的钱：\\(100 - 91 = 9\\) 元。所以，应找回9元。",
+      "passed": true,
+      "elapsed_seconds": 10.756
+    },
+    {
+      "index": 20,
+      "name": "浮点数边界解释",
+      "category": "math",
+      "prompt": "为什么程序中的0.1+0.2有时显示为0.30000000000000004？",
+      "answer": "这是因为浮点数在计算机中存储时会保留小数部分。当两个小数相加时，它们会被四舍五入到最接近的整数。在这种情况下，0.1和0.2相加的结果是0.3，而计算机默认将这个结果四舍五入到0.3，导致最终结果为0.30000000000000004。",
+      "passed": false,
+      "elapsed_seconds": 16.446
+    },
+    {
+      "index": 21,
+      "name": "除零边界",
+      "category": "math",
+      "prompt": "计算17除以0，并给出结果。",
+      "answer": "17除以0没有结果，因为任何数除以零都等于无穷大。",
+      "passed": false,
+      "elapsed_seconds": 4.066
+    },
+    {
+      "index": 22,
+      "name": "相关不等于因果新场景",
+      "category": "logic",
+      "prompt": "某城市空调销量和变压器故障同时上升，能直接证明买空调导致变压器故障吗？",
+      "answer": "不能。空调和变压器是两个不同的设备，它们之间没有直接因果关系。",
+      "passed": false,
+      "elapsed_seconds": 3.88
+    },
+    {
+      "index": 23,
+      "name": "肯定后件新场景",
+      "category": "logic",
+      "prompt": "如果认证服务器故障，用户会登录失败。现在用户登录失败，能必然推出认证服务器故障吗？",
+      "answer": "不能。即使用户登录失败，也可能是因为其他原因导致，比如网络问题、服务器异常或者输入错误等。",
+      "passed": true,
+      "elapsed_seconds": 4.998
+    },
+    {
+      "index": 24,
+      "name": "充分必要条件",
+      "category": "logic",
+      "prompt": "“是正方形”能推出“是矩形”，那么“是矩形”能必然推出“是正方形”吗？",
+      "answer": "不能。\"是矩形\"可以推导出\"是正方形\"，因为矩形和正方形都是平行四边形，而平行四边形是特殊的矩形。",
+      "passed": true,
+      "elapsed_seconds": 7.071
+    },
+    {
+      "index": 25,
+      "name": "有限测试边界",
+      "category": "logic",
+      "prompt": "固件在三种板卡上连续运行一个月没有异常，能证明所有板卡和输入下永远无Bug吗？",
+      "answer": "不能。固件是软件的一部分，它可能包含错误或漏洞，即使在正常运行的情况下也可能出现。因此，需要持续监控和维护固件以确保其稳定性和安全性。",
+      "passed": false,
+      "elapsed_seconds": 6.776
+    },
+    {
+      "index": 26,
+      "name": "反例判断",
+      "category": "logic",
+      "prompt": "有人说所有偶数都能被4整除。给出一个反例并判断该说法。",
+      "answer": "反例：20不能被4整除，因为它是偶数但不是4的倍数。",
+      "passed": true,
+      "elapsed_seconds": 4.143
+    },
+    {
+      "index": 27,
+      "name": "必要条件辨析",
+      "category": "logic",
+      "prompt": "程序通过编译是程序正确运行的充分条件吗？",
+      "answer": "是的，程序通过编译是程序正确运行的充分条件。编译器检查源代码并生成一个目标文件，这个文件包含了机器可以执行的代码。如果编译成功，那么程序就可以在实际计算机上运行。",
+      "passed": false,
+      "elapsed_seconds": 8.465
+    },
+    {
+      "index": 28,
+      "name": "Python可变默认字典",
+      "category": "coding",
+      "prompt": "修复共享默认字典问题：def put(k, v, cache={}): cache[k]=v; return cache",
+      "answer": "在Python中，`cache`字典是全局变量，一旦创建就不能更改。如果你想要在多个函数之间共享一个字典，可以使用局部变量。例如：\n\n```python\ndef put(k, v):\n    cache = {}\n    cache[k] = v\n\n# 使用这个函数\nput('a', 'b')\n```\n\n这样，每个函数都可以访问同一个字典。",
+      "passed": false,
+      "elapsed_seconds": 12.969
+    },
+    {
+      "index": 29,
+      "name": "Python空列表最大值",
+      "category": "coding",
+      "prompt": "写Python函数求整数列表最大值，不调用max；空列表必须抛ValueError。",
+      "answer": "```python\ndef find_max(numbers):\n    if not numbers:\n        raise ValueError(\"List is empty\")\n    \n    return max(numbers)\n```",
+      "passed": false,
+      "elapsed_seconds": 5.215
+    },
+    {
+      "index": 30,
+      "name": "Python别名陷阱",
+      "category": "coding",
+      "prompt": "解释并修复：rows = [[0] * 2] * 3；修改rows[0][0]时三行都会变化。",
+      "answer": "在Python中，列表推导式 `[[] * 2] * 3` 创建了一个包含三个元素的列表，每个元素都是一个长度为2的列表。当你尝试修改列表中的第一个元素（即 `rows[0][0]`）时，所有其他元素都会自动更新，因为它们是同一个列表对象。\n\n为了修复这个问题，你需要确保你对列表进行修改后，不会影响到其他部分。你可以通过创建一个新的列表来避免这种副作用：\n\n```python\nrows = [[0] * 2] * 3\nnew_rows = [row[:] for row in rows]\n```\n\n这样，每次修改 `rows[0][0]`",
+      "passed": true,
+      "elapsed_seconds": 21.969
+    },
+    {
+      "index": 31,
+      "name": "Python资源关闭",
+      "category": "coding",
+      "prompt": "写Python函数读取UTF-8文本文件，发生异常时也必须关闭文件。",
+      "answer": "```python\ndef read_utf8_file(file_path):\n    try:\n        with open(file_path, 'r', encoding='utf-8') as file:\n            return file.read()\n    except Exception as e:\n        print(f\"An error occurred: {e}\")\n        return None\n\n# 示例用法\nfile_path = 'example.txt'\nresult = read_utf8_file(file_path)\nif result is not None:\n    print(result)\n```\n\n### 解释\n- `with`语句确保文件在处理完毕后自动关闭。\n- 使用`try-except`块来捕获并处理可能发生的异常。\n- 如果文件无法打开，则会打印出错误信息并返回",
+      "passed": true,
+      "elapsed_seconds": 21.845
+    },
+    {
+      "index": 32,
+      "name": "Python越界修复",
+      "category": "coding",
+      "prompt": "修复：data=[1,2,3]; for i in range(len(data)+1): print(data[i])",
+      "answer": "```python\nfor i in range(len(data) + 1):\n    print(data[i])\n```",
+      "passed": false,
+      "elapsed_seconds": 3.917
+    },
+    {
+      "index": 33,
+      "name": "C格式化缓冲区",
+      "category": "coding",
+      "prompt": "C语言向固定数组out写格式化字符串，怎样替代sprintf并可靠判断输出被截断？",
+      "answer": "在C语言中，你可以使用`strcat`函数来将一个字符串追加到另一个字符串后面。为了确保格式化字符串不会被截断，可以使用`strtol`函数来处理浮点数，或者使用`printf`函数来控制输出的长度。以下是一个示例：\n\n```c\n#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char out[100];\n    int num = 123456789;\n    \n    // 使用 sprintf 函数格式化字符串\n    sprintf(out, \"Hello, %d\", num);\n    \n    // 使用 strtol 函数处理浮点数",
+      "passed": false,
+      "elapsed_seconds": 21.875
+    },
+    {
+      "index": 34,
+      "name": "C分配失败检查",
+      "category": "coding",
+      "prompt": "C语言malloc分配数组后必须做哪些关键检查？",
+      "answer": "在C语言中，`malloc`函数用于动态分配内存。为了确保分配的内存是有效的，需要进行一些关键检查。以下是一些常见的检查：\n\n1. **内存是否足够大**：如果分配的内存大小小于预期的值，可能会导致程序崩溃或数据丢失。可以通过比较实际分配的内存大小与预期值来判断。\n\n2. **释放内存**：在使用完分配的内存后，应该调用`free()`函数将其释放。这可以避免内存泄漏。\n\n3. **检查内存是否已释放**：在使用完内存后，应该检查是否有其他线程正在访问该内存区域。如果发现有其他进程正在使用",
+      "passed": false,
+      "elapsed_seconds": 21.46
+    },
+    {
+      "index": 35,
+      "name": "C释放后使用",
+      "category": "coding",
+      "prompt": "为什么free(p)后继续读取*p是不安全的？",
+      "answer": "因为`free()`函数会释放内存，而你正在尝试在内存上操作。",
+      "passed": false,
+      "elapsed_seconds": 3.593
+    },
+    {
+      "index": 36,
+      "name": "线程停止标志",
+      "category": "coding",
+      "prompt": "两个线程用普通bool stop共享停止信号，是否一定可靠？应使用什么机制？",
+      "answer": "在没有其他同步机制的情况下，两个线程共享一个布尔类型的`stop`信号可能会导致不可靠的结果。这是因为如果其中一个线程尝试阻塞另一个线程，可能会导致阻塞链环，从而引发死锁。为了避免这种情况，可以考虑使用互斥锁（mutex）或其他同步机制来控制线程之间的通信。",
+      "passed": true,
+      "elapsed_seconds": 11.478
+    },
+    {
+      "index": 37,
+      "name": "复杂度双层循环",
+      "category": "coding",
+      "prompt": "外层循环n次，内层第i次循环i次，循环体为常数操作，时间复杂度是什么？",
+      "answer": "时间复杂度是O(n)。因为每次循环都会执行一次常数操作，而n次循环意味着总操作次数为n。",
+      "passed": false,
+      "elapsed_seconds": 5.332
+    },
+    {
+      "index": 38,
+      "name": "Git取消暂存新文件",
+      "category": "tools",
+      "prompt": "src/config.py已经git add，我要保留修改但取消暂存，命令是什么？",
+      "answer": "在Git中，如果你想保留修改但取消暂存，可以使用`git add .`命令。这个命令会将所有未提交的更改都添加到暂存区，然后你可以继续进行其他操作。",
+      "passed": false,
+      "elapsed_seconds": 7.735
+    },
+    {
+      "index": 39,
+      "name": "Git查看已暂存差异",
+      "category": "tools",
+      "prompt": "怎样查看已经git add但尚未提交的差异？",
+      "answer": "在Git中，你可以通过`git diff`命令来查看已添加文件之间的差异。例如：\n\n```bash\ngit diff <file>\n```\n\n这将显示所有未被合并的更改。如果你只想查看特定文件的差异，可以指定文件名：\n\n```bash\ngit diff <file> --cached\n```\n\n这样，你可以在同一行看到所有未被合并的更改，包括你选择的文件。",
+      "passed": false,
+      "elapsed_seconds": 14.482
+    },
+    {
+      "index": 40,
+      "name": "Linux递归日志搜索",
+      "category": "tools",
+      "prompt": "Linux中递归查找当前目录所有.log文件里包含timeout的行，并显示行号。",
+      "answer": "在Linux中，你可以使用`find`命令来查找特定模式的文件。假设你想要找到所有以`.log`结尾且包含\"timeout\"的文件，可以使用以下命令：\n\n```bash\nfind / -name \"*.log\" -exec grep -l \"timeout\" {} \\;\n```\n\n这个命令会搜索当前目录及其子目录中的所有`.log`文件，并在每个文件中查找包含\"timeout\"的行。如果找到匹配项，它将打印出行号。\n\n请注意，这只是一个基本示例，实际操作可能需要根据具体需求调整。例如，你可能需要处理更多的参数（如过滤特定类型的文件）或者更复杂的搜索逻辑",
+      "passed": false,
+      "elapsed_seconds": 22.074
+    },
+    {
+      "index": 41,
+      "name": "SQL保留空组新表",
+      "category": "tools",
+      "prompt": "写SQL统计每个课程的选课人数，没有学生选的课程也显示0。表courses和enrollments通过course_id关联。",
+      "answer": "```sql\nSELECT course_id, COUNT(*) AS enroll_count\nFROM enrollments e\nJOIN courses c ON e.course_id = c.course_id\nGROUP BY course_id;\n```\n\n这个查询首先连接了`enrollments`表和`courses`表，然后按课程ID分组并计数每个课程的选课人数。如果某个课程没有学生选，则该课程的选课人数为0。",
+      "passed": false,
+      "elapsed_seconds": 13.87
+    },
+    {
+      "index": 42,
+      "name": "SQL解释COUNT空组",
+      "category": "tools",
+      "prompt": "LEFT JOIN后为什么COUNT(*)会让没有子记录的父项显示为1？怎样修复？",
+      "answer": "LEFT JOIN会返回所有行，包括那些没有匹配子查询的行。当你在COUNT(*)函数上应用LEFT JOIN时，它只会统计那些有子查询的行。因此，如果一个父项没有子查询，那么它的COUNT(*)将不会显示任何值。为了修复这个问题，你需要确保每个子查询都返回了至少一条记录。",
+      "passed": true,
+      "elapsed_seconds": 12.013
+    },
+    {
+      "index": 43,
+      "name": "FPGA单比特CDC",
+      "category": "engineering",
+      "prompt": "两级触发器同步器为什么适合慢变化单比特信号？它不能直接保证哪些场景？",
+      "answer": "两级触发器同步器非常适合处理慢变化的单比特信号。这种设计允许在没有延迟的情况下同时处理多个比特，从而提高数据传输效率。然而，它并不适用于所有场景，因为其设计限制了同步精度和可靠性。例如，在高噪声环境中，可能会出现误码率增加的问题。此外，由于需要同时处理多个比特，如果每个比特的误差都影响到其他比特的同步，可能会影响整体的性能。因此，尽管它在某些特定情况下非常有效，但在实际应用中仍需谨慎考虑。",
+      "passed": false,
+      "elapsed_seconds": 17.837
+    },
+    {
+      "index": 44,
+      "name": "FPGA复位释放",
+      "category": "engineering",
+      "prompt": "为什么异步复位常要求在每个时钟域同步释放？",
+      "answer": "异步复位通常要求在每个时钟域（Clock Domain）上同步释放，以确保所有相关电路能够正确地执行复位操作。这样可以避免由于时钟域之间的延迟导致的复位失败。",
+      "passed": false,
+      "elapsed_seconds": 7.989
+    },
+    {
+      "index": 45,
+      "name": "FPGA多比特跨域",
+      "category": "engineering",
+      "prompt": "为什么多比特总线不能把每一位分别接两级同步器？给出合适方案。",
+      "answer": "因为多比特总线是用于传输数据的，而每级同步器需要独立的信号来确保准确性和可靠性。如果将每一位单独连接到二级同步器上，可能会导致数据丢失或混乱。因此，通常建议使用多级同步器来提高系统的稳定性。",
+      "passed": false,
+      "elapsed_seconds": 9.705
+    },
+    {
+      "index": 46,
+      "name": "礼貌催进度",
+      "category": "writing",
+      "prompt": "把“你到底什么时候把接口修好”改得礼貌专业，只输出改写后的一句话。",
+      "answer": "“您何时完成了对接口的修复？”",
+      "passed": true,
+      "elapsed_seconds": 2.446
+    },
+    {
+      "index": 47,
+      "name": "专业指出问题",
+      "category": "writing",
+      "prompt": "把“这个设计完全不行”改成专业、可执行的一句话，只输出成品。",
+      "answer": "这个设计根本无法实现。",
+      "passed": false,
+      "elapsed_seconds": 1.985
+    }
+  ]
+}

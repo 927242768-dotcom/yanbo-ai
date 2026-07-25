@@ -54,7 +54,8 @@ class ResponseContract:
         rules: list[str] = []
         if self.exact_items is not None:
             rules.append(
-                f"必须恰好输出{self.exact_items}项；使用清晰编号；不得增加前言、总结或第{self.exact_items + 1}项。"
+                f"必须恰好输出{self.exact_items}项；使用清晰编号；每项必须包含具体、完整的正文，"
+                f"不得只写序号；不得增加前言、总结或第{self.exact_items + 1}项。"
             )
         if self.exact_sentences is not None:
             rules.append(
@@ -112,7 +113,7 @@ def analyze_response_contract(text: str) -> ResponseContract:
 
     item_count = _first_number(
         [
-            rf"(?:只|仅|请)?\s*(?:给我|给出|列出|提供|写出|生成|总结出|说明)\s*(?P<count>{_NUMBER})\s*(?:个|条|点|项|种|阶段|步骤|标题|建议|办法|原因|例子|要点|方案)",
+            rf"(?:只|仅|请)?\s*(?:给我|给出|列出|提供|写出|生成|总结出|说明)\s*(?:恰好|正好|只能|必须)?\s*(?P<count>{_NUMBER})\s*(?:个|条|点|项|种|阶段|步骤|标题|建议|办法|原因|例子|要点|方案)",
             rf"(?P<count>{_NUMBER})\s*(?:个|条|点|项|种)?\s*[^，。！？!?]{{0,12}}(?:建议|办法|原因|例子|要点|方案)",
             rf"(?P<count>{_NUMBER})\s*(?:个|条|点|项|种)?\s*(?:阶段|步骤|标题)",
         ],
@@ -125,7 +126,7 @@ def analyze_response_contract(text: str) -> ResponseContract:
 
     explicit_direct = bool(
         re.search(
-            r"(?:只|仅)(?:给|要|输出|写|返回)|不要(?:解释|展开|前言|总结)|直接(?:给|输出|写)|只要标题",
+            r"(?:只|仅)(?:能)?(?:给|要|输出|写|返回)|不要(?:解释|展开|前言|总结)|直接(?:给|输出|写)|只要标题",
             normalized,
         )
     )
@@ -201,9 +202,19 @@ def _trim_items(text: str, count: int) -> str:
 
 def _trim_sentences(text: str, count: int) -> str:
     sentences = [match.group(0).strip() for match in _SENTENCE.finditer(text) if match.group(0).strip()]
-    if not sentences:
-        return text.strip()
-    return "".join(sentences[:count]).strip()
+    if len(sentences) >= count:
+        return "".join(sentences[:count]).strip()
+
+    # 模型有时用分号或换行分隔多个完整语义段，但只在最后使用句号。
+    # 对明确要求固定句数的任务，把这些段落规范为独立句子。
+    clauses = [
+        clause.strip().rstrip("。！？!?；;")
+        for clause in re.split(r"[；;]+|\n+", text)
+        if clause.strip().rstrip("。！？!?；;")
+    ]
+    if len(clauses) >= count:
+        return "".join(f"{clause}。" for clause in clauses[:count])
+    return text.strip()
 
 
 def response_contract_satisfied(text: str, contract: ResponseContract) -> bool:
@@ -211,6 +222,10 @@ def response_contract_satisfied(text: str, contract: ResponseContract) -> bool:
         markers = list(_LIST_MARKER.finditer(text))
         if len(markers) != contract.exact_items:
             return False
+        for index, marker in enumerate(markers):
+            end = markers[index + 1].start() if index + 1 < len(markers) else len(text)
+            if not text[marker.end():end].strip():
+                return False
     if contract.exact_sentences is not None:
         sentences = [
             match.group(0).strip()

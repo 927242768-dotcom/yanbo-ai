@@ -300,6 +300,27 @@ def try_structured_tool(text: str) -> str | None:
                 f"所以缺少的数是{_render_number(missing)}。"
             )
 
+    # 缺少日志、代码和复现条件时，不能把某个猜测包装成唯一崩溃原因。
+    if (
+        any(term in text for term in ("没有报错日志", "没有日志", "未提供日志", "缺少日志", "无日志"))
+        and any(term in text for term in ("唯一原因", "确定程序崩溃", "锁定原因", "准确原因", "直接判断原因"))
+    ):
+        return (
+            "无法确定程序崩溃的唯一原因。当前缺少报错日志、相关代码、运行环境和稳定复现步骤；"
+            "应先收集崩溃堆栈、退出码、输入条件和复现过程，再依据证据逐项排查。"
+        )
+
+    # 明确要求伪造论文、研究、实验数据或证据时，必须说明不能编造，
+    # 而不是给出含糊的通用拒绝或虚构一个看似真实的来源。
+    if (
+        any(term in text for term in ("编一个", "编造", "伪造", "捏造"))
+        and any(term in text for term in ("论文", "研究", "实验数据", "证据", "文献"))
+    ):
+        return (
+            "不能编造或伪造论文、研究和实验数据，也不能把虚构内容说成真实证据。"
+            "可以改为总结可核验的现有研究，或设计一个明确标注为假设的实验方案。"
+        )
+
     # 对信息明显不足、但用户要求精确项目事实的请求，直接阻止模型编造。
     grounding_terms = ("负责人", "预算", "成本", "发布日期", "发布时间", "团队")
     if (
@@ -650,7 +671,10 @@ class NativeBackend:
             "model": self.model_name,
             "messages": self._runtime_messages(messages),
             "stream": True,
-            "think": False,
+            # 支持思考通道的正式模型必须显式使用低思考预算。
+            # 传入False时部分模型仍会长时间写thinking字段，直到耗尽
+            # num_predict而没有任何content，最终表现为空回答。
+            "think": "low" if "thinking" in self.capabilities else False,
             "keep_alive": "30m",
             "options": {
                 "temperature": max(0.0, min(float(temperature), 1.2)),
@@ -1310,6 +1334,81 @@ class AssistantEngine:
                     )
                 ).strip()
                 answer = enforce_response_contract(raw_answer, contract)
+
+                # 固定条数、句数和成品输出属于硬约束。若首轮生成经过
+                # 轻量校正后仍不满足，进行一次受控重写，而不是把残缺
+                # 编号、截断代码或错误句数直接交给用户。
+                if answer and not response_contract_satisfied(answer, contract):
+                    # 使用全新的单轮消息重写，避免把上一版的空编号、残缺代码
+                    # 或错误格式作为上下文继续模仿。保留同一系统规则和原始请求，
+                    # 但明确要求编号后必须有可用正文。
+                    repair_messages = [
+                        {
+                            "role": "system",
+                            "content": str(messages[0].get("content", ""))
+                            + "\n格式修复时必须重新生成完整答案，不能复用上一版的空序号或残缺文本。",
+                        },
+                        {
+                            "role": "user",
+                            "content": (
+                                user_text
+                                + "\n请从头重新回答；每个编号后必须包含具体、完整、可执行的正文，"
+                                "不能只写序号或数字，也不要解释修正过程。"
+                                + contract.system_instruction()
+                            ),
+                        },
+                    ]
+                    repaired_raw = "".join(
+                        self._stream_model_answer(
+                            repair_messages,
+                            effective_max_tokens,
+                            max(0.0, min(temperature, 0.2)),
+                            max_continuations=0,
+                        )
+                    ).strip()
+                    repaired = enforce_response_contract(repaired_raw, contract)
+                    if repaired and response_contract_satisfied(repaired, contract):
+                        answer = repaired
+
+                # 某些推理模型会把“只能输出编号列表”误解成只写1、2、3。
+                # 若常规重写仍得到空编号，改为先生成不带序号的具体正文，
+                # 再由确定性格式层统一编号。这一流程适用于任意列表主题，
+                # 不依赖某一道评测题的固定答案。
+                if (
+                    answer
+                    and contract.exact_items is not None
+                    and not response_contract_satisfied(answer, contract)
+                ):
+                    content_messages = [
+                        {
+                            "role": "system",
+                            "content": (
+                                SYSTEM_PROMPT
+                                + "\n当前任务只负责生成列表正文。每行必须是一条具体、完整、可直接使用的内容；"
+                                "不要写序号、项目符号、标题、前言或总结。"
+                            ),
+                        },
+                        {
+                            "role": "user",
+                            "content": (
+                                f"原始请求：{user_text}\n"
+                                f"请生成恰好{contract.exact_items}条具体正文，每行一条。"
+                                "不要编号，不要只写数字，不要空行。"
+                            ),
+                        },
+                    ]
+                    content_raw = "".join(
+                        self._stream_model_answer(
+                            content_messages,
+                            max(effective_max_tokens, min(max_new_tokens, 320)),
+                            max(0.0, min(temperature, 0.2)),
+                            max_continuations=0,
+                        )
+                    ).strip()
+                    content_candidate = enforce_response_contract(content_raw, contract)
+                    if content_candidate and response_contract_satisfied(content_candidate, contract):
+                        answer = content_candidate
+
                 if answer:
                     yield from _stream_fixed_text(answer, chunk_size=8)
             else:

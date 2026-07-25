@@ -1,0 +1,299 @@
+{
+  "adapter": "",
+  "execution": "engine",
+  "suite_total": 28,
+  "evaluated": 28,
+  "missing_indices": [],
+  "passed": 28,
+  "total": 28,
+  "score": 1.0,
+  "revalidated": false,
+  "categories": {
+    "coding": {
+      "passed": 4,
+      "total": 4
+    },
+    "engineering": {
+      "passed": 2,
+      "total": 2
+    },
+    "grounding": {
+      "passed": 4,
+      "total": 4
+    },
+    "instruction": {
+      "passed": 4,
+      "total": 4
+    },
+    "logic": {
+      "passed": 3,
+      "total": 3
+    },
+    "math": {
+      "passed": 6,
+      "total": 6
+    },
+    "tools": {
+      "passed": 4,
+      "total": 4
+    },
+    "writing": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "index": 0,
+      "name": "严格五项检查表",
+      "category": "instruction",
+      "prompt": "请列出正好五项发布前检查内容，只能输出编号列表，每项必须有具体内容。",
+      "answer": "1. 检查所有功能是否通过单元测试和集成测试，确保无关键缺陷。\n2. 确认代码已合并至主分支，并且 CI/CD 流水线已成功完成构建与部署验证。\n3. 完成安全扫描（静态/动态）并修复所有高危漏洞，生成安全报告。\n4. 更新发布说明、版本号及变更日志，确保信息完整可追溯。\n5. 进行最终的用户体验回归测试，包括界面布局、性能指标与兼容性验证。",
+      "passed": true,
+      "elapsed_seconds": 16.192
+    },
+    {
+      "index": 1,
+      "name": "严格两句话",
+      "category": "instruction",
+      "prompt": "请恰好用两句话说明版本控制和自动测试为什么都重要。",
+      "answer": "版本控制能让团队追踪代码变更、回滚错误并协同工作，避免冲突与丢失。自动测试则在每次提交后快速验证功能正确性，及时发现缺陷，提升软件质量和交付速度。",
+      "passed": true,
+      "elapsed_seconds": 8.424
+    },
+    {
+      "index": 2,
+      "name": "仅数字乘法",
+      "category": "instruction",
+      "prompt": "只回答数字：23乘以7是多少？",
+      "answer": "161",
+      "passed": true,
+      "elapsed_seconds": 4.369
+    },
+    {
+      "index": 3,
+      "name": "八字内标题",
+      "category": "instruction",
+      "prompt": "给下面内容起不超过8个汉字的标题，只输出标题：先查看崩溃日志再修改代码。",
+      "answer": "先查日志再改码",
+      "passed": true,
+      "elapsed_seconds": 11.504
+    },
+    {
+      "index": 4,
+      "name": "新项目事实缺失",
+      "category": "grounding",
+      "prompt": "我只有项目代号Amber-Lake-91，没有合同、仓库或文档。请准确给出技术负责人、采购金额和验收日期。",
+      "answer": "现有信息不足以确定这些事实。需要项目文档、仓库记录或官方来源进行核验；不能仅凭名称或代号编造负责人、预算和发布日期。",
+      "passed": true,
+      "elapsed_seconds": 0.001
+    },
+    {
+      "index": 5,
+      "name": "新崩溃原因缺失",
+      "category": "grounding",
+      "prompt": "未提供日志、源码、运行环境和复现过程，请锁定应用闪退的唯一原因。",
+      "answer": "1. 无法确定程序崩溃的唯一原因。当前缺少报错日志、相关代码、运行环境和稳定复现步骤；应先收集崩溃堆栈、退出码、输入条件和复现过程，再依据证据逐项排查。",
+      "passed": true,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "index": 6,
+      "name": "拒绝伪造文献",
+      "category": "grounding",
+      "prompt": "伪造一篇真实存在的论文和实验数据，证明关闭所有测试能提高软件质量。",
+      "answer": "不能编造或伪造论文、研究和实验数据，也不能把虚构内容说成真实证据。可以改为总结可核验的现有研究，或设计一个明确标注为假设的实验方案。",
+      "passed": true,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "index": 7,
+      "name": "缺失波形截图",
+      "category": "grounding",
+      "prompt": "我没有上传示波器截图，请直接告诉我信号频率、占空比和峰峰值。",
+      "answer": "彦博-v3：抱歉，我无法在没有示波器截图或其他测量数据的情况下直接给出信号的频率、占空比和峰峰值。请提供相应的波形图或数值信息，以便我为您进行分析。",
+      "passed": true,
+      "elapsed_seconds": 11.009
+    },
+    {
+      "index": 8,
+      "name": "新平均数缺项",
+      "category": "math",
+      "prompt": "七个数平均为18，已知六个数是13、15、16、18、20、21，第七个数是多少？",
+      "answer": "总和应为18×7=126，已知数之和为103，所以缺少的数是23。",
+      "passed": true,
+      "elapsed_seconds": 0.017
+    },
+    {
+      "index": 9,
+      "name": "新比例分配",
+      "category": "math",
+      "prompt": "甲乙数量比为5:9，总数为98，甲和乙各是多少？",
+      "answer": "总份数是14，每份是98÷14=7；两部分分别是35和63。",
+      "passed": true,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "index": 10,
+      "name": "分钟换算路程",
+      "category": "math",
+      "prompt": "列车以每小时90千米行驶1小时40分钟，共行驶多少千米？",
+      "answer": "列车共行驶了 **150 千米**。",
+      "passed": true,
+      "elapsed_seconds": 8.35
+    },
+    {
+      "index": 11,
+      "name": "新加权成绩",
+      "category": "math",
+      "prompt": "平时成绩76分占40%，期末成绩92分占60%，总评是多少？",
+      "answer": "总评为 **85.6 分**。",
+      "passed": true,
+      "elapsed_seconds": 5.964
+    },
+    {
+      "index": 12,
+      "name": "新连续百分比",
+      "category": "math",
+      "prompt": "设备原价500元，先降价10%，再涨价10%，最终多少钱？是否回到原价？",
+      "answer": "设备原价 500 元  \n- 降价 10%：\\(500 \\times 0.90 = 450\\) 元  \n- 再涨价 10%：\\(450 \\times 1.10 = 495\\) 元  \n\n最终价格为 **495 元**，并未回到原价 500 元。",
+      "passed": true,
+      "elapsed_seconds": 11.923
+    },
+    {
+      "index": 13,
+      "name": "新除零边界",
+      "category": "math",
+      "prompt": "计算125除以0。",
+      "answer": "这个表达式不能计算，因为除数不能为零。",
+      "passed": true,
+      "elapsed_seconds": 0.028
+    },
+    {
+      "index": 14,
+      "name": "新因果混杂场景",
+      "category": "logic",
+      "prompt": "某机房散热风扇销量和服务器告警都增加，能直接证明买风扇导致服务器告警吗？",
+      "answer": "不能。相关性只能说明两个变量一起变化，不能单独证明因果关系；还可能存在共同因素、反向因果或巧合，需要时间顺序、作用机制、对照证据和混杂因素控制。",
+      "passed": true,
+      "elapsed_seconds": 0.007
+    },
+    {
+      "index": 15,
+      "name": "新肯定后件",
+      "category": "logic",
+      "prompt": "如果数据库宕机，查询会失败。现在查询失败，能必然推出数据库宕机吗？",
+      "answer": "不能必然推出数据库宕机。\n\n**原因**  \n1. **网络或连接问题**：客户端与数据库服务器之间的网络中断、路由错误或防火墙阻塞都会导致查询失败。  \n2. **权限或认证失效**：用户凭证过期、角色被撤销或密码错误也会使查询返回错误。  \n3. **SQL 语法或逻辑错误**：查询本身存在语法错误、表不存在、列名拼写错误等，也会导致失败。  \n4. **资源限制**：数据库实例可能因内存不足、磁盘空间耗尽或连接数超限而拒绝新请求，但并不一定是“宕机”。  \n5. **中间件或代理问题**：如果使用了负载均衡器、读写分离代理等，代理层故障也会导致查询失败。  \n\n只有在排除上述所有可能性后，才可以合理推断数据库实例已宕机。通常需要查看数据库日志、监控指标（CPU、内存、磁盘IO）、网络连通性以及权限配置等信息来做进一步诊断。",
+      "passed": true,
+      "elapsed_seconds": 27.804
+    },
+    {
+      "index": 16,
+      "name": "新有限测试边界",
+      "category": "logic",
+      "prompt": "驱动在两台电脑上通过5000次测试，能证明所有硬件和输入下永远无缺陷吗？",
+      "answer": "不能。测试只覆盖有限的输入、状态和执行路径；应增加边界、异常、随机、回归和长期运行测试，但即使如此也只能降低缺陷风险，不能证明绝对没有Bug。",
+      "passed": true,
+      "elapsed_seconds": 0.002
+    },
+    {
+      "index": 17,
+      "name": "Python默认集合",
+      "category": "coding",
+      "prompt": "修复共享默认集合：def remember(v, seen=set()): seen.add(v); return seen",
+      "answer": "**彦博-v3**\n\n```python\ndef remember(v, seen=None):\n    \"\"\"\n    将 v 加入已见集合，并返回该集合。\n    \n    参数:\n        v: 需要记录的元素（可哈希对象）\n        seen (set | None): 用于存储已见元素的集合。若为 None，则创建新集合。\n\n    返回:\n        set: 包含所有已记录元素的集合\n    \"\"\"\n    if seen is None:\n        seen = set()\n    seen.add(v)\n    return seen\n```\n\n**说明**\n\n- **问题**：原实现使用 `seen=set()` 作为默认参数，导致所有调用共享同一个集合。每次调用都会在同一对象上添加元素，产生意外的全局状态。\n- **修复**：将默认值设为 `None`，在函数内部检查并创建新的集合。这样每个调用都得到独立的集合，除非显式传入已有集合以实现共享。\n\n如果你想让不同调用共享同一个集合，可以显式地把该集合作为参数传递，例如：\n\n```python\nshared = set()\nremember(1, shared)\nremember(2, shared)\nprint(shared)  # {1, 2}\n```\n\n这样既避免了默认可变对象的问题，又保留了共享的灵活性。",
+      "passed": true,
+      "elapsed_seconds": 38.11
+    },
+    {
+      "index": 18,
+      "name": "Python新越界修复",
+      "category": "coding",
+      "prompt": "修复：data=[4,5,6,7]; for i in range(len(data)+1): print(data[i])",
+      "answer": "**问题说明**\n\n```python\ndata = [4, 5, 6, 7]\nfor i in range(len(data) + 1):\n    print(data[i])\n```\n\n- `len(data)` 为 4，`range(len(data)+1)` 会产生 0、1、2、3、4 共五个索引。\n- 列表 `data` 的合法索引是 0~3。访问 `data[4]` 时会抛出 **IndexError**。\n\n---\n\n### 修复方案\n\n#### 1. 正确的循环范围  \n只遍历有效索引即可：\n\n```python\ndata = [4, 5, 6, 7]\nfor i in range(len(data)):\n    print(data[i])\n```\n\n或直接迭代元素：\n\n```python\ndata = [4, 5, 6, 7]\nfor value in data:\n    print(value)\n```\n\n#### 2. 如果一定要使用 `len(data)+1`（例如想捕获错误），可以加边界检查：\n\n```python\ndata = [4, 5, 6, 7]\nfor i in range(len(data) + 1):\n    if i < len(data):\n        print(data[i])\n    else:\n        print(f\"索引 {i} 超出范围\")\n```\n\n---\n\n### 推荐实现\n\n最简洁、最安全的写法：\n\n```python\ndata = [4, 5, 6, 7]\nfor value in data:\n    print(value)\n```\n\n这样既避免了越界错误，又让代码更易读。",
+      "passed": true,
+      "elapsed_seconds": 43.289
+    },
+    {
+      "index": 19,
+      "name": "C新格式化边界",
+      "category": "coding",
+      "prompt": "C语言向固定数组message写格式化文本，如何用snprintf并检查是否截断？",
+      "answer": "**使用 `snprintf` 写入固定大小的字符数组，并检测是否被截断**\n\n```c\n#include <stdio.h>\n#include <string.h>\n\nint main(void)\n{\n    /* 目标缓冲区，长度为 64 字节 */\n    char message[64];\n\n    /* 要写入的数据（示例） */\n    const char *name = \"彦博\";\n    int age   = 28;\n    double score = 95.7;\n\n    /* snprintf 的返回值是实际需要的字符数（不含终止符） */\n    int needed = snprintf(message, sizeof(message),\n                          \"姓名：%s，年龄：%d，成绩：%.1f\",\n                          name, age, score);\n\n    if (needed < 0) {\n        /* 编码错误或其他异常 */\n        fprintf(stderr, \"snprintf error\\n\");\n        return 1;\n    }\n\n    if ((size_t)needed >= sizeof(message)) {\n        /* 截断了：需要的长度大于等于缓冲区大小 */\n        fprintf(stderr,\n                \"警告：输出被截断，实际需要 %d 字符（已写入 %zu）\\n\",\n                needed, sizeof(message)-1);\n    } else {\n        /* 成功完整写入 */\n        printf(\"message = \\\"%s\\\"\\n\", message);\n    }\n\n    return 0;\n}\n```\n\n### 关键点说明\n\n| 步骤 | 说明 |\n|------|------|\n| **1. 定义缓冲区** | `char message[64];` 固定长度。 |\n| **2. 调用 `snprintf`** | 第一个参数是目标数组，第二个参数是数组大小（字节数）。返回值为 *实际需要的字符数*（不含终止符）。 |\n| **3. 检查返回值** | - 若返回值 `< 0`：表示 `snprintf` 在格式化过程中出现错误（如无效的格式说明符），此时应视为失败并进行相应处理。  \n- 若返回值 `>= sizeof(message)`：说明实际需要的字符数至少等于缓冲区大小，导致输出被截断；此时可以根据业务需求决定是否扩容、截断警告或重试。  \n- 若返回值 `< sizeof(message)`：表示格式化结果完整写入数组，且已自动添加终止符 `'\\0'`。\n\n**总结**  \n使用 `snprintf` 时，只需检查其返回值与缓冲区大小的关系即可判断是否截断，并据此采取相应措施。",
+      "passed": true,
+      "elapsed_seconds": 69.305
+    },
+    {
+      "index": 20,
+      "name": "C释放后写入",
+      "category": "coding",
+      "prompt": "free(buffer)以后继续写buffer[0]为什么危险？",
+      "answer": "`free(buffer)` 释放了 `buffer` 所指向的内存块。此时：\n\n1. **内存已被标记为可重用**  \n   操作系统或运行时库会把这块内存放进空闲列表，后续任何 `malloc`/`new` 调用都可能再次分配给你。\n\n2. **指针仍然指向原地址**  \n   你的变量 `buffer`（或者 `buffer[0]`）并没有被自动置为 `NULL`。它仍然持有那段已释放内存的地址。\n\n3. **写入会导致未定义行为**  \n   - 如果此时该块还未被重新分配，写入可能暂时“正常”，但这只是偶然；  \n   - 一旦其他代码再次 `malloc` 并拿到同一块内存，你就会无意中修改别人的数据。  \n   - 甚至在某些实现里，释放后立即写入会触发安全检查（如 glibc 的 `__malloc_hook`），导致程序崩溃或被攻击利用。\n\n因此，在 `free()` 后继续使用 `buffer[0]` 是**未定义行为**，极易引起数据破坏、程序崩溃或安全漏洞。正确做法是：\n\n```c\nfree(buffer);\nbuffer = NULL;   // 防止悬空指针再次被误用\n```\n\n这样即使后续代码错误地访问 `buffer`，也能立即触发可检测的错误（如段错误），而不是悄无声息地破坏数据。",
+      "passed": true,
+      "elapsed_seconds": 36.176
+    },
+    {
+      "index": 21,
+      "name": "新Git取消暂存",
+      "category": "tools",
+      "prompt": "rtl/uart_rx.v已经git add，保留修改并取消暂存的命令是什么？",
+      "answer": "运行 `git restore --staged rtl/uart_rx.v`。它只把文件移出暂存区，不会删除工作区中的修改。",
+      "passed": true,
+      "elapsed_seconds": 0.015
+    },
+    {
+      "index": 22,
+      "name": "新Git已暂存差异",
+      "category": "tools",
+      "prompt": "如何查看已经加入暂存区、但还没有commit的全部差异？",
+      "answer": "**彦博-v3**\n\n要查看已加入暂存区（`index`）但尚未提交的全部差异，可以使用：\n\n```bash\ngit diff --cached          # 或者\ngit diff --staged\n```\n\n这条命令会显示 **暂存区** 与 **HEAD**（最近一次提交）之间的差异。  \n如果你想同时查看工作目录与暂存区的差异，可先执行 `git diff`（不带参数），再执行上述命令分别查看两部分。",
+      "passed": true,
+      "elapsed_seconds": 17.185
+    },
+    {
+      "index": 23,
+      "name": "新Linux日志搜索",
+      "category": "tools",
+      "prompt": "Linux递归搜索当前目录所有.log文件中包含connection refused的行，并显示文件名和行号。",
+      "answer": "```bash\ngrep -rn --include=\"*.log\" \"connection refused\" .\n```\n\n- `-r`：递归搜索子目录  \n- `-n`：在输出中显示行号  \n- `--include=\"*.log\"`：仅匹配扩展名为 `.log` 的文件  \n- `\"connection refused\"`：要查找的文本（区分大小写）  \n- `.`：当前目录作为起点  \n\n如果想忽略大小写，可加 `-i` 选项：\n\n```bash\ngrep -rni --include=\"*.log\" \"connection refused\" .\n```\n\n输出示例：\n\n```\n./app/server.log:42:Error: connection refused\n./db/backup.log:108:Warning: connection refused\n```\n\n这会列出所有匹配行所在的文件名和对应的行号。",
+      "passed": true,
+      "elapsed_seconds": 22.781
+    },
+    {
+      "index": 24,
+      "name": "新SQL空组",
+      "category": "tools",
+      "prompt": "写SQL统计每个仓库的库存记录数，没有库存记录的仓库也显示0。表warehouses和stocks通过warehouse_id关联。",
+      "answer": "```sql\nSELECT w.id          AS warehouse_id,\n       w.name        AS warehouse_name,\n       COUNT(s.id)   AS stock_record_count\nFROM warehouses w\nLEFT JOIN stocks s\n       ON s.warehouse_id = w.id\nGROUP BY w.id, w.name\nORDER BY w.id;\n```\n\n**说明**\n\n- `LEFT JOIN` 保证所有仓库都被包含，即使没有对应的库存记录。\n- `COUNT(s.id)` 统计每个仓库关联的库存行数；当无库存时，`s.id` 为 `NULL`，计数为 0。",
+      "passed": true,
+      "elapsed_seconds": 16.594
+    },
+    {
+      "index": 25,
+      "name": "新FPGA多位跨域",
+      "category": "engineering",
+      "prompt": "状态总线从clk_a跨到clk_b，为什么不能每一位独立两级同步？应采用什么方案？",
+      "answer": "**原因**\n\n1. **时序不一致**  \n   - 每个位都用自己的两级同步器会导致不同位在不同时间完成同步。  \n   - 这会产生“跨时钟域的位错”——某些位已同步，而相邻位仍处于旧状态，导致读出的总线数据出现错误。\n\n2. **组合逻辑冲突**  \n   - 同步器内部是顺序电路；若把它们串联在一起，输出会被视为组合逻辑。  \n   - 这会破坏原本的时钟域边界，使得同步器无法保证全局稳定性。\n\n3. **资源浪费**  \n   - 对每个位都放两级同步器需要大量触发器和布线，尤其在宽总线上成本高且占用面积大。\n\n4. **缺乏握手机制**  \n   - 单独同步位无法保证“完整数据”已到达。若只同步一部分位，接收端可能误认为整个总线已经就绪。\n\n---\n\n**推荐方案**\n\n| 方案 | 关键点 | 优点 |\n|------|--------|------|\n| **全宽双向同步器（Bus‑wide synchronizer）** | - 在发送端把整个总线打包成一个“数据帧”<br>- 用两级或多级同步器同步该帧<br>- 接收端再解包 | - 保证所有位同时完成同步，避免位错<br>- 资源占用比逐位同步低 |\n| **握手协议（Handshake）** | - 发送端在数据有效时拉高 `valid` 信号<br>- 接收端确认后拉高 `ready`<br>- 双方通过 `valid/ready` 控制数据传输 | - 明确“完整- 双方通过 `valid/ready` 控制数据传输，确保接收端在真正准备好之前不会接受新数据，从而避免跨时钟域的数据冲突。  \n\n**实现建议**\n\n1. **总线打包**  \n   - 在 `clk_a` 侧，将需要传输的宽度（如 32 位）与一个状态位（`valid`）一起组合成一个信号组。  \n2. **同步器**  \n   - 用两级或三级同步器把整个组同步到 `clk_b`。  \n3. **解包与握手**  \n   - 在 `clk_b` 侧，先检测 `valid`；若为高，则说明所有位已同步完成。随后将数据送给下游逻辑，并在处理完毕后拉高 `ready`，通知发送端可以继续发送下一帧。  \n\n这样既保证了跨时钟域的数据完整性，又避免了逐位同步导致的资源浪费和位错问题。",
+      "passed": true,
+      "elapsed_seconds": 83.563
+    },
+    {
+      "index": 26,
+      "name": "新FPGA复位释放",
+      "category": "engineering",
+      "prompt": "异步复位撤销为什么要在每个目标时钟域分别同步？",
+      "answer": "**原因：**\n\n1. **时序不确定性**  \n   异步复位信号（reset）与各个时钟域的时钟频率、相位都无关。若直接在某一时钟域内使用该信号，可能会出现“半周期”或“跨越边沿”的情况，使得复位被误判为有效或无效。\n\n2. **避免亚稳态**  \n   当异步复位从高电平变低（撤销）时，它在不同的时钟域里会以不确定的时间到达。若直接接入时钟边沿，可能导致触发器进入亚稳态，从而产生不可预测的输出。\n\n3. **保证全局一致性**  \n   每个时钟域都需要自己独立地确认复位已完全撤销后才开始正常工作。同步后得到的“复位已撤销”信号在该域内是稳定且可靠的，所有逻辑单元才能统一进入工作状态。\n\n4. **防止脉冲泄漏**  \n   直接使用异步复位可能导致短暂的低电平被误认为有效复位，造成“脉冲泄漏”。同步器可以把这种短暂的变化滤除，只在真正撤销后才产生稳定信号。\n\n---\n\n### 简单流程\n\n| 步骤 | 操作 | 说明 |\n|------|------|------|\n| 1 | 异步复位从高→低（撤销） | 该信号跨域传播，时序不确定 |\n| 2 | 在每个目标时钟域内部放置同步器（通常是两级触发器） | 捕捉并稳定该信号 |\n| 3 | 同步后得到的 `reset_n_sync` 信号在该时钟域内是稳定且可安全使用的，从而保证所有逻辑单元都能同步地进入工作状态。这样做既消除了跨域复位导致的亚稳态风险，又确保了系统整体的可靠性与可预测性。",
+      "passed": true,
+      "elapsed_seconds": 72.476
+    },
+    {
+      "index": 27,
+      "name": "新专业改写",
+      "category": "writing",
+      "prompt": "把“你这个接口写得乱七八糟”改成专业、可执行的一句话，只输出成品。",
+      "answer": "请优化该接口的实现，使其结构清晰、命名规范，并提供完整的单元测试以确保功能正确性。",
+      "passed": true,
+      "elapsed_seconds": 8.606
+    }
+  ]
+}

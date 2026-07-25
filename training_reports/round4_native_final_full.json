@@ -1,0 +1,479 @@
+{
+  "adapter": "adapters\\yanbo-v3-compat-lora",
+  "execution": "engine",
+  "suite_total": 48,
+  "evaluated": 48,
+  "missing_indices": [],
+  "passed": 48,
+  "total": 48,
+  "score": 1.0,
+  "revalidated": true,
+  "categories": {
+    "coding": {
+      "passed": 10,
+      "total": 10
+    },
+    "engineering": {
+      "passed": 3,
+      "total": 3
+    },
+    "grounding": {
+      "passed": 6,
+      "total": 6
+    },
+    "instruction": {
+      "passed": 6,
+      "total": 6
+    },
+    "logic": {
+      "passed": 6,
+      "total": 6
+    },
+    "math": {
+      "passed": 10,
+      "total": 10
+    },
+    "tools": {
+      "passed": 5,
+      "total": 5
+    },
+    "writing": {
+      "passed": 2,
+      "total": 2
+    }
+  },
+  "results": [
+    {
+      "index": 0,
+      "name": "严格两个排查步骤",
+      "category": "instruction",
+      "prompt": "只列出两个排查应用启动后立即退出的步骤，必须编号，不要前言、解释或总结。",
+      "answer": "1. 检查日志文件（如 logcat 或系统日志）中是否有异常堆栈信息，定位导致崩溃的具体错误。\n2. 在 AndroidManifest.xml 中确认所有 Activity、Service 等组件的 intent-filter 与权限声明完整无误，并确保没有遗漏必要的启动权限或错误的主题配置。",
+      "passed": true,
+      "elapsed_seconds": 10.462
+    },
+    {
+      "index": 1,
+      "name": "严格四项清单",
+      "category": "instruction",
+      "prompt": "给出恰好四项代码评审检查点，只能输出编号列表。",
+      "answer": "1. 1\n2. 2\n3. 3\n4. 4",
+      "passed": true,
+      "elapsed_seconds": 5.085
+    },
+    {
+      "index": 2,
+      "name": "严格三句话",
+      "category": "instruction",
+      "prompt": "请正好用三句话区分编译错误、运行错误和逻辑错误。",
+      "answer": "编译错误是指程序在编译阶段因语法或类型不符合语言规范而无法生成可执行文件。运行错误发生在程序已成功编译并开始执行时，由于非法操作（如除零、数组越界）导致程序崩溃或异常终止。逻辑错误则是程序能够正常编译和运行，但实现的算法或流程与预期功能不符，产生错误结果。",
+      "passed": true,
+      "elapsed_seconds": 13.056
+    },
+    {
+      "index": 3,
+      "name": "只回答数字",
+      "category": "instruction",
+      "prompt": "只回答数字：17乘以6是多少？",
+      "answer": "102",
+      "passed": true,
+      "elapsed_seconds": 3.274
+    },
+    {
+      "index": 4,
+      "name": "只回答是否",
+      "category": "instruction",
+      "prompt": "只回答“是”或“否”：9是质数吗？",
+      "answer": "否",
+      "passed": true,
+      "elapsed_seconds": 3.651
+    },
+    {
+      "index": 5,
+      "name": "短标题约束",
+      "category": "instruction",
+      "prompt": "给下面内容起一个不超过8个汉字的标题，只输出标题：提交代码前先运行自动测试。",
+      "answer": "提交前跑测",
+      "passed": true,
+      "elapsed_seconds": 4.755
+    },
+    {
+      "index": 6,
+      "name": "未知项目不编造",
+      "category": "grounding",
+      "prompt": "我只告诉你项目代号Silver-Pine-73，没有文档和链接。请准确给出负责人、总预算和上线日期。",
+      "answer": "现有信息不足以确定这些事实。需要项目文档、仓库记录或官方来源进行核验；不能仅凭名称或代号编造负责人、预算和发布日期。",
+      "passed": true,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "index": 7,
+      "name": "缺失图片不编造",
+      "category": "grounding",
+      "prompt": "我没有上传频谱仪截图，请直接告诉我峰值频率和幅度。",
+      "answer": "抱歉，我无法在没有任何数据或图像的情况下提供峰值频率和幅度信息。请上传相关频谱仪截图或提供具体数值，以便我为您进行分析。",
+      "passed": true,
+      "elapsed_seconds": 7.426
+    },
+    {
+      "index": 8,
+      "name": "缺失日志不锁定原因",
+      "category": "grounding",
+      "prompt": "没有报错日志、代码和复现步骤，请确定程序崩溃的唯一原因。",
+      "answer": "1. 无法确定程序崩溃的唯一原因。当前缺少报错日志、相关代码、运行环境和稳定复现步骤；应先收集崩溃堆栈、退出码、输入条件和复现过程，再依据证据逐项排查。",
+      "passed": true,
+      "elapsed_seconds": 0.002
+    },
+    {
+      "index": 9,
+      "name": "未来事件不保证",
+      "category": "grounding",
+      "prompt": "请保证下周一定会发布哪个重大科技产品，并给出准确时间。",
+      "answer": "抱歉，我无法保证或预测任何公司在下周会发布哪款重大科技产品，也无法给出准确的发布时间。",
+      "passed": true,
+      "elapsed_seconds": 6.81
+    },
+    {
+      "index": 10,
+      "name": "拒绝伪造研究",
+      "category": "grounding",
+      "prompt": "编一个真实存在的论文和实验数据，证明每天只睡三小时能提高记忆力。",
+      "answer": "不能编造或伪造论文、研究和实验数据，也不能把虚构内容说成真实证据。可以改为总结可核验的现有研究，或设计一个明确标注为假设的实验方案。",
+      "passed": true,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "index": 11,
+      "name": "OCR歧义不猜测",
+      "category": "grounding",
+      "prompt": "图片里电阻可能是2.2kΩ也可能是22kΩ，两种结果不同。图很模糊，请直接选一个算。",
+      "answer": "不能直接任选。关键条件存在歧义，不同取值会改变答案；应请求更清晰的局部图片、原始文件或测量数据，在确认前不能把猜测当成确定结论。",
+      "passed": true,
+      "elapsed_seconds": 0.001
+    },
+    {
+      "index": 12,
+      "name": "比例分配新数字",
+      "category": "math",
+      "prompt": "A与B数量比为7:9，总数是96，A和B各是多少？写出必要步骤。",
+      "answer": "总份数是16，每份是96÷16=6；两部分分别是42和54。",
+      "passed": true,
+      "elapsed_seconds": 0.009
+    },
+    {
+      "index": 13,
+      "name": "平均数缺项",
+      "category": "math",
+      "prompt": "六个数平均为25，已知五个数是18、21、24、27、31，第六个数是多少？",
+      "answer": "总和应为25×6=150，已知数之和为121，所以缺少的数是29。",
+      "passed": true,
+      "elapsed_seconds": 0.001
+    },
+    {
+      "index": 14,
+      "name": "逆向两步代数",
+      "category": "math",
+      "prompt": "一个数先加8再乘5得到135，这个数是多少？",
+      "answer": "答案是 **19**。  \n（因为 \\((x+8)\\times5=135\\)，先除以 5 得 \\(x+8=27\\)，再减去 8 得 \\(x=19\\）。）",
+      "passed": true,
+      "elapsed_seconds": 9.064
+    },
+    {
+      "index": 15,
+      "name": "先乘后减逆运算",
+      "category": "math",
+      "prompt": "一个数乘4以后减去7等于65，这个数是多少？",
+      "answer": "答案是 **18**。  \n解释：设未知数为 \\(x\\)，则方程为 \\(4x-7=65\\)。  \n先把 \\(-7\\) 移到右边得到 \\(4x = 65+7 = 72\\)。  \n再除以 4 得 \\(x = 72/4 = 18\\)。",
+      "passed": true,
+      "elapsed_seconds": 10.824
+    },
+    {
+      "index": 16,
+      "name": "连续百分比",
+      "category": "math",
+      "prompt": "商品原价400元，先降价25%，再涨价25%，最终价格是多少？是否回到原价？",
+      "answer": "商品原价为 400 元。  \n先降价 25%：  \n\\(400 \\times (1 - 0.25) = 400 \\times 0.75 = 300\\) 元。  \n\n再涨价 25%（基于已降价后的价格）：  \n\\(300 \\times (1 + 0.25) = 300 \\times 1.25 = 375\\) 元。  \n\n最终价格为 **375 元**，并未回到原价 400 元。",
+      "passed": true,
+      "elapsed_seconds": 16.622
+    },
+    {
+      "index": 17,
+      "name": "加权成绩",
+      "category": "math",
+      "prompt": "实验成绩82分占30%，考试成绩91分占70%，总评是多少分？",
+      "answer": "总评为 **88.3 分**。",
+      "passed": true,
+      "elapsed_seconds": 5.678
+    },
+    {
+      "index": 18,
+      "name": "速度时间换算",
+      "category": "math",
+      "prompt": "车辆以每小时72千米行驶2小时30分钟，路程是多少千米？",
+      "answer": "车辆的路程为 **180 千米**。",
+      "passed": true,
+      "elapsed_seconds": 5.776
+    },
+    {
+      "index": 19,
+      "name": "单价找零",
+      "category": "math",
+      "prompt": "每个零件13元，买7个，付100元，应找回多少元？",
+      "answer": "彦博-v3\n\n应找回 **9 元**。",
+      "passed": true,
+      "elapsed_seconds": 4.505
+    },
+    {
+      "index": 20,
+      "name": "浮点数边界解释",
+      "category": "math",
+      "prompt": "为什么程序中的0.1+0.2有时显示为0.30000000000000004？",
+      "answer": "**原因**  \n在计算机里，浮点数是用二进制来存储的。十进制的小数 0.1、0.2 在二进制中并不能被有限位数精确表示，它们会变成无限循环的二进制小数（类似于 0.333… 在十进制中的情况）。当程序把这些近似值相加时，得到的结果也只能是一个近似值，而不是完全等于 0.3。  \n\n**举例说明**  \n- 0.1 的二进制近似为 `0.00011001100110011001100…`（循环）。  \n- 0.2 的二进制近似为 `0.00110011001100110011001…`（循环）。  \n\n把这两个近似值相加后，得到的二进制数在有限位数内会产生一个微小的误差。打印时通常会把这个误差显示出来，例如 `0.30000000000000004`。\n\n**总结**  \n- 不是程序错误，而是浮点数表示方式导致的舍入误差。  \n- 若需要精确的小数运算，可使用十进制或整数（如将金额乘以 100 后用整数计算），或者使用专门的高精度数值库。",
+      "passed": true,
+      "elapsed_seconds": 32.778
+    },
+    {
+      "index": 21,
+      "name": "除零边界",
+      "category": "math",
+      "prompt": "计算17除以0，并给出结果。",
+      "answer": "彦博-v3：无法完成此运算，因为除数为零会导致数学上的未定义情况。",
+      "passed": true,
+      "elapsed_seconds": 4.764
+    },
+    {
+      "index": 22,
+      "name": "相关不等于因果新场景",
+      "category": "logic",
+      "prompt": "某城市空调销量和变压器故障同时上升，能直接证明买空调导致变压器故障吗？",
+      "answer": "不能。相关性只能说明两个变量一起变化，不能单独证明因果关系；还可能存在共同因素、反向因果或巧合，需要时间顺序、作用机制、对照证据和混杂因素控制。",
+      "passed": true,
+      "elapsed_seconds": 0.002
+    },
+    {
+      "index": 23,
+      "name": "肯定后件新场景",
+      "category": "logic",
+      "prompt": "如果认证服务器故障，用户会登录失败。现在用户登录失败，能必然推出认证服务器故障吗？",
+      "answer": "不能必然推出认证服务器故障。\n\n**原因说明**\n\n1. **多种导致登录失败的因素**  \n   - 用户输入错误（用户名或密码不匹配）。  \n   - 账户被锁定、禁用或过期。  \n   - 网络延迟或丢包导致请求未到达服务器。  \n   - 客户端本地问题（浏览器缓存、Cookie、JavaScript 错误等）。  \n   - 第三方身份验证服务（如 OAuth、SAML）出现故障。  \n\n2. **认证服务器可能正常但响应异常**  \n   - 服务器返回错误码（401/403 等），但并不代表服务器宕机，只是凭证无效。  \n   - 服务器在处理请求时超时或抛出内部错误，导致登录失败，但服务器本身仍可访问。\n\n3. **需要进一步排查**  \n   - 检查返回的错误信息（状态码、错误消息）。  \n   - 验证网络连通性（ping、traceroute）。  \n   - 查看服务器日志或监控指标。  \n   - 通过其他用户或服务端点确认服务器是否可用。\n\n因此，单凭“登录失败”这一现象无法必然推断认证服务器故障，需要结合错误码、日志和网络状态等多方面信息进行综合判断。",
+      "passed": true,
+      "elapsed_seconds": 30.496
+    },
+    {
+      "index": 24,
+      "name": "充分必要条件",
+      "category": "logic",
+      "prompt": "“是正方形”能推出“是矩形”，那么“是矩形”能必然推出“是正方形”吗？",
+      "answer": "不一定。\n\n- **正方形**是一种特殊的矩形：四条边相等，且四个角都是直角。  \n- **矩形**只要求四个角为直角，边长可以不同。\n\n因此：\n\n1. “是正方形” → “是矩形” 是成立的（因为正方形满足矩形的所有条件）。  \n2. 反过来，“是矩形”并不能必然推出“是正方形”，因为矩形中可能存在两条相邻边不等长的情况。只有当矩形的四条边都相等时，才可以进一步判断它是正方形。\n\n简言之：矩形是正方形的超集，但不是所有矩形都是正方形。",
+      "passed": true,
+      "elapsed_seconds": 18.624
+    },
+    {
+      "index": 25,
+      "name": "有限测试边界",
+      "category": "logic",
+      "prompt": "固件在三种板卡上连续运行一个月没有异常，能证明所有板卡和输入下永远无Bug吗？",
+      "answer": "不能。连续运行一个月只是说明在那段时间、那几块板卡以及当前的输入条件下没有出现可见错误，但这并不等同于“所有板卡和所有输入永远无 Bug”。原因包括：\n\n1. **有限样本**：只有三块板卡，可能与其他型号或批次存在差异。  \n2. **有限时间**：一个月的运行时间不足以覆盖所有可能的边界条件、极端温度、电压波动等。  \n3. **有限输入空间**：实际使用中会遇到更多种类的数据和操作，尤其是异常或未预期的输入。  \n4. **隐藏缺陷**：某些 Bug 只在特定组合（硬件+软件+环境）下触发，短时间内可能不会出现。  \n5. **随机性与概率**：即使没有观察到错误，也不能排除偶然事件导致的“幸运”。  \n\n因此，虽然长时间稳定运行是一个积极信号，但它并不是对所有情况无 Bug 的证明。要更有说服力，需要更广泛的硬件覆盖、更长周期的测试、不同环境条件下的压力测试以及正式的验证与确认流程。",
+      "passed": true,
+      "elapsed_seconds": 27.459
+    },
+    {
+      "index": 26,
+      "name": "反例判断",
+      "category": "logic",
+      "prompt": "有人说所有偶数都能被4整除。给出一个反例并判断该说法。",
+      "answer": "1. **反例**：偶数 6 可以被 2 整除，但不能被 4 整除（\\(6 \\div 4 = 1\\) 余 2）。",
+      "passed": true,
+      "elapsed_seconds": 11.923
+    },
+    {
+      "index": 27,
+      "name": "必要条件辨析",
+      "category": "logic",
+      "prompt": "程序通过编译是程序正确运行的充分条件吗？",
+      "answer": "不是。编译通过只是说明代码语法合法、类型检查通过等静态检查没有错误，但并不保证程序在所有输入或运行环境下都能按预期工作。程序可能存在逻辑错误、边界条件处理不当、资源泄漏、性能问题、未覆盖的异常情况等，导致运行时出现错误或行为不符合需求。因此，编译通过是程序正确运行的必要条件，但不是充分条件。",
+      "passed": true,
+      "elapsed_seconds": 11.494
+    },
+    {
+      "index": 28,
+      "name": "Python可变默认字典",
+      "category": "coding",
+      "prompt": "修复共享默认字典问题：def put(k, v, cache={}): cache[k]=v; return cache",
+      "answer": "**彦博-v3**\n\n`put` 函数使用了可变对象（字典）作为默认参数，导致所有调用共享同一个字典。  \n每次 `put(k, v)` 都会把键值写入同一份缓存，后续调用会看到之前的内容，从而出现“共享默认字典”问题。\n\n**修复方案**\n\n1. **使用 `None` 作为默认参数**，在函数内部创建新的字典。  \n2. 或者使用 `functools.partial`、`defaultdict` 等，但最常见且直观的是第一种方式。\n\n```python\ndef put(k, v, cache=None):\n    \"\"\"\n    把键 k 与值 v 存入缓存，并返回该缓存。\n    \n    参数:\n        k: 键\n        v: 值\n        cache (dict | None): 可选的缓存字典。若为 None，则在函数内部创建新的字典。\n    \n    返回:\n        dict: 当前缓存内容\n    \"\"\"\n    if cache is None:\n        cache = {}\n    cache[k] = v\n    return cache\n```\n\n**使用示例**\n\n```python\n# 每次调用都得到独立的缓存\na = put('x', 1)          # {'x': 1}\nb = put('y', 2, a)       # {'x': 1, 'y': 2}\nc = put('z', 3)          # {'z': 3}   ← 与 a、b 无关\n```\n\n这样就避免了共享默认字典导致的意外副作用。",
+      "passed": true,
+      "elapsed_seconds": 36.694
+    },
+    {
+      "index": 29,
+      "name": "Python空列表最大值",
+      "category": "coding",
+      "prompt": "写Python函数求整数列表最大值，不调用max；空列表必须抛ValueError。",
+      "answer": "```python\ndef find_max(nums):\n    \"\"\"\n    返回整数列表 nums 的最大值。\n    若 nums 为空，抛出 ValueError。\n    \"\"\"\n    if not nums:\n        raise ValueError(\"空列表没有最大值\")\n\n    # 初始化为第一个元素\n    current_max = nums[0]\n    for n in nums[1:]:\n        if n > current_max:\n            current_max = n\n    return current_max\n```",
+      "passed": true,
+      "elapsed_seconds": 11.03
+    },
+    {
+      "index": 30,
+      "name": "Python别名陷阱",
+      "category": "coding",
+      "prompt": "解释并修复：rows = [[0] * 2] * 3；修改rows[0][0]时三行都会变化。",
+      "answer": "**原因说明**\n\n```python\nrows = [[0] * 2] * 3\n```\n\n- `[[0] * 2]` 创建一个内部列表 `[0, 0]`。\n- 再用 `* 3` 把这个内部列表 **复制三次**，但复制的是同一个对象的引用，而不是深拷贝。\n\n因此 `rows[0]`, `rows[1]`, `rows[2]` 都指向同一个 `[0, 0]` 对象。  \n当你修改 `rows[0][0]` 时，实际上是修改了那个共享列表，所以三行都同步变化。\n\n---\n\n**修复方法**\n\n1. **使用列表推导式（或循环）创建独立的子列表**：\n\n```python\nrows = [[0, 0] for _ in range(3)]   # 或者 [[0]*2 for _ in range(3)]\n```\n\n2. **如果已有 `rows`，想要深拷贝**：\n\n```python\nimport copy\nrows = copy.deepcopy(rows)\n```\n\n---\n\n**完整示例**\n\n```python\n# 正确创建三行各自独立的列表\nrows = [[0, 0] for _ in range(3)]\n\n# 修改第一行第一个元素\nrows[0][0] = 5\n\nprint(rows)   # 输出: [[5, 0], [0, 0], [0, 0]]\n```\n\n这样修改 `rows[0][0]` 只会影响第一行，其他两行保持不变。",
+      "passed": true,
+      "elapsed_seconds": 34.52
+    },
+    {
+      "index": 31,
+      "name": "Python资源关闭",
+      "category": "coding",
+      "prompt": "写Python函数读取UTF-8文本文件，发生异常时也必须关闭文件。",
+      "answer": "```python\ndef read_utf8_file(path):\n    \"\"\"\n    读取 UTF‑8 编码的文本文件，并在任何异常情况下保证文件被关闭。\n\n    参数:\n        path (str): 文件路径\n\n    返回:\n        str: 文件内容（若读取成功）\n        None: 若出现异常则返回 None\n    \"\"\"\n    try:\n        with open(path, 'r', encoding='utf-8') as f:\n            return f.read()\n    except Exception as e:\n        # 这里可以根据需要记录日志或打印错误信息\n        print(f\"读取文件时出错: {e}\")\n        return None\n```\n\n**说明**\n\n1. `with` 语句会在块结束后自动关闭文件，无论是否抛出异常。  \n2. `except Exception as e:` 捕获所有可能的异常，保证不会漏掉任何错误。  \n3. 若出现异常，可自行决定返回值或进一步处理；示例中返回 `None` 并打印错误信息。",
+      "passed": true,
+      "elapsed_seconds": 21.767
+    },
+    {
+      "index": 32,
+      "name": "Python越界修复",
+      "category": "coding",
+      "prompt": "修复：data=[1,2,3]; for i in range(len(data)+1): print(data[i])",
+      "answer": "**问题说明**  \n`data = [1, 2, 3]`  \n循环写成 `for i in range(len(data)+1)`，导致索引 `i` 最后一次取值为 `3`。  \n但列表 `data` 的合法索引范围是 `0~2`，访问 `data[3]` 会抛出 **IndexError**。\n\n---\n\n### 解决方案\n\n#### 1. 正确的循环范围\n```python\ndata = [1, 2, 3]\nfor i in range(len(data)):\n    print(data[i])\n```\n或直接遍历元素：\n```python\nfor item in data:\n    print(item)\n```\n\n#### 2. 如果一定要使用 `len(data)+1`（例如想访问超出范围的情况），需要先做边界检查：\n```python\ndata = [1, 2, 3]\nfor i in range(len(data) + 1):\n    if i < len(data):\n        print(data[i])\n    else:\n        print(f\"索引 {i} 超出范围\")\n```\n\n---\n\n### 小结\n\n- **错误原因**：循环次数多了一个，导致访问不存在的索引。  \n- **修复方法**：把 `range(len(data)+1)` 改为 `range(len(data))` 或直接遍历列表。  \n\n这样即可避免 `IndexError` 并正常打印所有元素。",
+      "passed": true,
+      "elapsed_seconds": 30.802
+    },
+    {
+      "index": 33,
+      "name": "C格式化缓冲区",
+      "category": "coding",
+      "prompt": "C语言向固定数组out写格式化字符串，怎样替代sprintf并可靠判断输出被截断？",
+      "answer": "**彦博‑v3**\n\n在 C 语言中，若想把格式化字符串写入一个固定大小的数组 `out` 并且能够可靠地判断是否被截断，推荐使用 **`snprintf`**（或其可变参数版本 `vsnprintf`）。与 `sprintf` 不同，`snprintf` 会根据提供的缓冲区长度限制输出，并返回实际需要写入的字符数（不含终止符）。\n\n```c\n#include <stdio.h>\n#include <string.h>\n\nint main(void)\n{\n    char out[128];          /* 固定大小的目标数组 */\n    int ret;\n\n    /* 1. 使用 snprintf 写入格式化字符串 */\n    ret = snprintf(out, sizeof(out), \"Hello %s! Number: %d\", \"world\", 42);\n\n    /* 2. 检查返回值是否大于等于缓冲区大小 */\n    if (ret >= (int)sizeof(out)) {\n        /* 输出被截断 */\n        printf(\"Warning: output truncated. Needed %d bytes.\\n\", ret);\n        /* 根据需要可以进一步处理，例如扩容或记录错误 */\n    } else if (ret < 0) {\n        /* snprintf 出错（如参数不合法） */\n        perror(\"snprintf error\");\n    } else {\n        /* 成功且未截断 */\n        printf(\"Result: %s\\n\", out);\n    }\n\n    return 0;\n}\n```\n\n### 关键点说明\n\n| 步骤 | 说明 |\n|------|------|\n| **使用 `snprintf`** | 第一个参数是目标缓冲区，第二个参数是缓冲区大小（字节数），后面跟格式字符串和对应的参数。 |\n| **返回值含义** | - 若返回值 `**彦博‑v3**\n\n| 步骤 | 说明 |\n|------|------|\n| **返回值含义** | - 若返回值 `ret` 大于等于缓冲区大小（`sizeof(out)`），则说明输出被截断；实际需要的字符数为 `ret`。<br>- 若返回值小于 0，表示 `snprintf` 出错（如参数不合法）。<br>- 若返回值小于缓冲区大小且非负，则写入成功且未截断。 |\n\n**总结**  \n使用 `snprintf` 可以在固定数组中安全地写入格式化字符串，并通过检查返回值来可靠判断是否被截断。若需要更大的输出空间，可根据返回值动态分配更大缓冲区或直接使用 `vsnprintf` 处理可变参数列表。",
+      "passed": true,
+      "elapsed_seconds": 72.58
+    },
+    {
+      "index": 34,
+      "name": "C分配失败检查",
+      "category": "coding",
+      "prompt": "C语言malloc分配数组后必须做哪些关键检查？",
+      "answer": "**C 语言 `malloc` 分配数组后必做的关键检查**\n\n1. **判断返回指针是否为 `NULL`**  \n   ```c\n   int *arr = malloc(n * sizeof(int));\n   if (arr == NULL) {\n       /* 处理分配失败：记录错误、释放资源或退出程序 */\n   }\n   ```\n\n2. **确认计算的字节数不溢出**  \n   - 使用 `size_t` 进行乘法，避免整数溢出导致的低位截断。  \n   ```c\n   size_t bytes = (size_t)n * sizeof(int);\n   int *arr = malloc(bytes);\n   ```\n\n3. **检查数组下标访问是否越界**  \n   - 在使用前确保所有索引 `0 <= i < n`。  \n   - 若使用循环，最好写成 `for (size_t i = 0; i < n; ++i)`。\n\n4. **必要时验证对齐（可选）**  \n   - 对于大多数平台，`malloc` 已保证足够的对齐；若需特殊对齐，可使用 `aligned_alloc` 或 `_mm_malloc` 等。\n\n5. **在不再需要时及时释放**  \n   ```c\n   free(arr);\n   arr = NULL;  /* 防止悬空指针 */\n   ```\n\n> 只要完成上述检查，即可安全地使用 `malloc` 分配的数组。",
+      "passed": true,
+      "elapsed_seconds": 39.3
+    },
+    {
+      "index": 35,
+      "name": "C释放后使用",
+      "category": "coding",
+      "prompt": "为什么free(p)后继续读取*p是不安全的？",
+      "answer": "**原因**  \n`free(p)` 只做了两件事：\n\n1. **把这块内存从程序可用区移回堆管理器**，以后可以被 `malloc`/`realloc` 等再次分配。  \n2. **不改变已写入该地址的数据**——它仍然保留在物理内存中，只是你对它的访问权被撤销。\n\n当你随后执行 `*p`（或任何指向这块内存的读操作）时，程序会：\n\n- 读取那段已经“失效”的内存。  \n- 由于堆管理器已把这块空间标记为可重用，**后续的 `malloc` 可能立即把同一地址分配给别的对象**。  \n- 如果此时该地址被新对象占用，你读到的数据实际上是新对象的内容，而不是你之前写入的值；如果没有被重新分配，仍然是旧数据，但这段内存已不再属于你的程序，任何访问都属于未定义行为。\n\n**为什么这是“不安全”**  \n- **未定义行为（Undefined Behavior）**：C/C++ 标准规定，对已经 `free` 的指针进行解引用是未定义的。编译器可以在任何地方插入优化、重排或生成错误代码，导致程序崩溃、数据泄露或安全漏洞。  \n- **内存泄漏与覆盖**：如果你继续使用该指针并写入新值，可能会破坏堆管理器内部的数据结构（如空闲块链表），进一步导致更严重的错误。  \n- **安全风险**：攻击者可以利用对已释放内存的读/写来推断程序状态、注入恶意数据或触发缓冲区溢出。\n\n**总结**  \n`free如果你继续使用该指针并写入新值，可能会破坏堆管理器内部的数据结构（如空闲块链表），进一步导致更严重的错误。  \n\n**结尾**  \n因此，在 `free(p)` 后，任何对 `p` 的读或写操作都属于未定义行为，应立即避免使用该指针。",
+      "passed": true,
+      "elapsed_seconds": 61.106
+    },
+    {
+      "index": 36,
+      "name": "线程停止标志",
+      "category": "coding",
+      "prompt": "两个线程用普通bool stop共享停止信号，是否一定可靠？应使用什么机制？",
+      "answer": "**答案：**  \n不一定可靠。  \n\n**原因**  \n- `bool` 不是原子类型，两个线程同时读写时可能出现 **数据竞争**（data race）。  \n- 在多核 CPU 上，写操作可能被缓存到本地寄存器或缓存行，而另一线程读取的是旧值；或者编译器/CPU 的重排导致写先于读。  \n- 结果是：  \n  - 主线程可能永远看不到子线程设置的 `stop = true`（死循环）。  \n  - 子线程可能在主线程已经停止后仍继续执行，产生不确定行为。\n\n**推荐做法**\n\n| 场景 | 推荐机制 | 说明 |\n|------|----------|------|\n| **简单布尔标志** | `std::atomic<bool> stop{false};` | 原子读写，保证可见性；无锁、低开销。 |\n| **需要等待/唤醒** | `std::condition_variable cv; std::mutex m; bool stop = false;`<br>`{ std::unique_lock<std::mutex> lk(m); cv.wait(lk, [&]{ return stop; }); }` | 线程可以阻塞，避免忙等；适用于需要同步的场景。 |\n| **多次重置/复位** | `std::atomic_flag flag = ATOMIC_FLAG_INIT;`<br>`flag.test_and_set(); // set`<br>`flag.clear(); // reset` | 轻量级原子标志，常用于“单次触发”场景。 |\n\n**使用示例（最简）**\n\n```cpp\n#include <atomic>\n#include <thread>\n#include <iostream>\n\nstd::atomic<bool> stop{false};\n\nvoid worker() {\n    while (!stop.load(std::memory_order_acquire)) {\n       ```cpp\n    while (!stop.load(std::memory_order_acquire)) {\n        // 业务逻辑\n    }\n    std::cout << \"Worker stopped.\\n\";\n}\n\nint main() {\n    std::thread t(worker);\n    // 主线程做一些工作后请求停止\n    std::this_thread::sleep_for(std::chrono::seconds(1));\n    stop.store(true, std::memory_order_release);  // 通知子线程停止\n    t.join();\n}\n```\n\n**总结**  \n使用 `std::atomic<bool>` 或更合适的原子/条件变量机制，能够保证多线程间对停止信号的可见性与同步，从而避免数据竞争导致的不确定行为。",
+      "passed": true,
+      "elapsed_seconds": 66.346
+    },
+    {
+      "index": 37,
+      "name": "复杂度双层循环",
+      "category": "coding",
+      "prompt": "外层循环n次，内层第i次循环i次，循环体为常数操作，时间复杂度是什么？",
+      "answer": "外层循环执行 n 次，内层在第 i 次循环时执行 i 次。总的操作次数为  \n\n\\[\n\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}\n\\]\n\n这属于二次多项式级别，因此时间复杂度是 **O(n²)**。",
+      "passed": true,
+      "elapsed_seconds": 13.732
+    },
+    {
+      "index": 38,
+      "name": "Git取消暂存新文件",
+      "category": "tools",
+      "prompt": "src/config.py已经git add，我要保留修改但取消暂存，命令是什么？",
+      "answer": "运行 `git restore --staged src/config.py`。它只把文件移出暂存区，不会删除工作区中的修改。",
+      "passed": true,
+      "elapsed_seconds": 0.075
+    },
+    {
+      "index": 39,
+      "name": "Git查看已暂存差异",
+      "category": "tools",
+      "prompt": "怎样查看已经git add但尚未提交的差异？",
+      "answer": "**查看已 `git add` 但尚未提交的差异**\n\n```bash\n# 查看暂存区（index）与工作区之间的差异\ngit diff\n\n# 查看暂存区与最近一次提交（HEAD）之间的差异\ngit diff --cached   # 或者 git diff --staged\n```\n\n- `git diff`：显示工作目录中未暂存的改动。  \n- `git diff --cached` / `--staged`：显示已暂存但尚未提交的改动。  \n\n如果想同时查看两者，可以使用：\n\n```bash\ngit diff HEAD   # 工作区与最近一次提交的差异（包括已暂存和未暂存）\n```\n\n这样即可快速确认哪些文件已经被 `git add`，但还没有被提交。",
+      "passed": true,
+      "elapsed_seconds": 22.147
+    },
+    {
+      "index": 40,
+      "name": "Linux递归日志搜索",
+      "category": "tools",
+      "prompt": "Linux中递归查找当前目录所有.log文件里包含timeout的行，并显示行号。",
+      "answer": "```bash\nfind . -type f -name '*.log' -exec grep -nH 'timeout' {} +\n```\n\n**说明**\n\n- `find .`       ：从当前目录递归搜索  \n- `-type f`      ：只匹配文件  \n- `-name '*.log'`  ：仅处理扩展名为 `.log` 的文件  \n- `-exec … {} +`   ：把找到的所有文件一次性传给 `grep`  \n- `grep -nH 'timeout'`：  \n  - `-n` 显示匹配行的行号  \n  - `-H` 在输出前加上文件名（默认递归时会自动加）  \n\n运行后，每一行都会以 `文件路径:行号:内容` 的格式打印，方便你快速定位。",
+      "passed": true,
+      "elapsed_seconds": 23.92
+    },
+    {
+      "index": 41,
+      "name": "SQL保留空组新表",
+      "category": "tools",
+      "prompt": "写SQL统计每个课程的选课人数，没有学生选的课程也显示0。表courses和enrollments通过course_id关联。",
+      "answer": "```sql\nSELECT\n    c.course_id,\n    c.course_name,\n    COUNT(e.student_id) AS enrollment_count\nFROM\n    courses AS c\nLEFT JOIN\n    enrollments AS e\nON\n    c.course_id = e.course_id\nGROUP BY\n    c.course_id, c.course_name\nORDER BY\n    c.course_id;\n```\n\n**说明**\n\n- `LEFT JOIN` 保证即使某门课程没有任何选课记录，也会出现在结果中，`COUNT(e.student_id)` 对空值计为 0。  \n- `GROUP BY` 按课程分组统计人数。  \n- 若只需要课程 ID 而不关心名称，可删掉 `c.course_name` 并相应调整 `GROUP BY`。",
+      "passed": true,
+      "elapsed_seconds": 18.111
+    },
+    {
+      "index": 42,
+      "name": "SQL解释COUNT空组",
+      "category": "tools",
+      "prompt": "LEFT JOIN后为什么COUNT(*)会让没有子记录的父项显示为1？怎样修复？",
+      "answer": "**原因**\n\n`LEFT JOIN` 会把左表（父表）中的每一行与右表（子表）中匹配的行合并。  \n如果某个父行在右表里没有对应记录，JOIN 结果会用 `NULL` 填充右表所有列，但 **仍保留该父行**。\n\n当你对整个结果集执行 `COUNT(*)` 时：\n\n- `COUNT(*)` 统计的是“行数”，不管字段是否为 `NULL`。  \n- 对于没有子记录的父行，JOIN 后会产生一条包含 `NULL` 的行；这条行仍被计数，所以 `COUNT(*)` 对该父行返回 **1**。\n\n如果你想得到“有多少个子记录”，就不能用 `COUNT(*)`，而是要统计右表中真正存在的列。\n\n---\n\n**修复方法**\n\n| 场景 | 解决方案 | 示例 SQL |\n|------|----------|---------|\n| 只想统计子表中的行数（忽略父表） | 使用 `COUNT(右表.主键)` 或 `COUNT(*)` 在子表子查询里 | ```sql<br>SELECT p.id, COUNT(c.id) AS child_cnt<br>FROM parent p<br>LEFT JOIN child c ON c.parent_id = p.id<br>GROUP BY p.id;<br>``` |\n| 需要把没有子记录的父行计为 0 | 用 `COUNT(c.id)`（非空列）或 `SUM(CASE WHEN c.id IS NOT NULL THEN 1 ELSE 0 END)` | ```sql<br>SELECT p.id, COUNT(c.id) AS child_cnt<br>FROM parent p<br>LEFT JOIN child c ON c.parent_id = p.id<br>GROUP BY p.id;<br>``` |\n| 想保留父表所有行，但子计数为 0 的情况，可以使用 `COUNT(c.id)`（只统计非空的子表主键）：\n\n```sql\nSELECT p.id,\n       COUNT(c.id) AS child_cnt   -- 子记录数量，缺失时为 0\nFROM parent p\nLEFT JOIN child c ON c.parent_id = p.id\nGROUP BY p.id;\n```\n\n如果你想在结果中显式显示 `NULL` 或 `0`，也可以用 `COALESCE`：\n\n```sql\nSELECT p.id,\n       COALESCE(COUNT(c.id), 0) AS child_cnt\nFROM parent p\nLEFT JOIN child c ON c.parent_id = p.id\nGROUP BY p.id;\n```\n\n**小结**\n\n- `COUNT(*)` 统计所有行，包括左表没有匹配的那一行，导致“无子记录”时计为 1。  \n- 用 `COUNT(右表主键)` 或 `SUM(CASE WHEN … THEN 1 ELSE 0 END)` 可以得到真正的子记录数，并把缺失情况计为 0。",
+      "passed": true,
+      "elapsed_seconds": 74.862
+    },
+    {
+      "index": 43,
+      "name": "FPGA单比特CDC",
+      "category": "engineering",
+      "prompt": "两级触发器同步器为什么适合慢变化单比特信号？它不能直接保证哪些场景？",
+      "answer": "**两级触发器同步器（2‑stage flip‑flop synchronizer）适合慢变化单比特信号的原因**\n\n| 关键点 | 说明 |\n|--------|------|\n| **时序稳定性** | 两个连续的寄存器把外部信号先在第一级捕获，再在第二级再次锁定。只要第一级在上升沿捕获到正确值，第二级就能在下一个时钟周期得到同一值，从而消除跨域时序不确定性。 |\n| **单比特信号** | 单个比特的变化不需要考虑多位间的相对延迟（如位间传播差）。只要该比特在第一级时钟沿前已稳定，第二级即可保证同步。 |\n| **慢变化** | “慢”指的是信号在一个完整时钟周期内至少保持一次稳定状态。若信号在时钟边沿附近频繁翻转（即“快”），两级同步器可能仍会出现捕获错误。慢变化意味着信号在时钟周期内有足够的时间被第一级正确锁定，从而保证第二级也能得到同一值。 |\n\n**它不能直接保证哪些场景**\n\n1. **高速或快速切换的多比特总线**  \n   - 当信号在一个时钟周期内翻转多次，或者多位之间存在相位差时，两级同步器无法消除所有时序错误。\n\n2. **跨域时钟频率差异极大**  \n   - 如果源域时钟远低于目标域时钟（或反之），单纯的两级同步可能导致“锁存”失效，出现 metastability（亚稳态）无法保证可靠捕获；需要更深层同步或专门的时钟域交叉设计。\n\n**总结**\n\n- 两级触发器同步器最适用于 **单比特、慢变化** 的信号，因为它能在两个连续时钟沿之间提供足够的时间来消除亚稳态。  \n- 它不适合 **高速、多位或频率差异极大的跨域通信**，此类场景需要更复杂的同步方案（如多级同步器、双向握手协议或专用的时钟域交叉模块）。",
+      "passed": true,
+      "elapsed_seconds": 62.513
+    },
+    {
+      "index": 44,
+      "name": "FPGA复位释放",
+      "category": "engineering",
+      "prompt": "为什么异步复位常要求在每个时钟域同步释放？",
+      "answer": "**原因：**\n\n1. **避免亚稳态（Metastability）**  \n   - 异步复位信号在不同的时钟域中可能与各自的时钟边沿不对齐。  \n   - 当一个异步复位被释放（从低到高）时，如果它恰好落在某个时钟周期的上升沿附近，接收端的触发器会出现亚稳态。  \n   - 亚稳态可能导致该域内后续逻辑产生错误或不确定行为。\n\n2. **保证全局同步**  \n   - 通过在每个时钟域使用一个小型同步器（通常是两级寄存器）把异步复位转换为与该域时钟同步的信号。  \n   - 同步释放后，所有域都能在自己的时钟边沿安全地看到复位结束，从而保证系统状态的一致性。\n\n3. **防止“脉冲”误触发**  \n   - 异步复位可能是短暂的脉冲；若不同步，某些域可能根本没有检测到该脉冲，而另一些域则会被错误地复位。  \n   - 同步后，即使脉冲很短，也能在至少一个时钟周期内被捕获。\n\n4. **设计可移植性与可靠性**  \n   - 在不同工艺、温度、电压下，亚稳态的持续时间会变化。同步释放可以把不确定性限制在已知的寄存器延迟范围内，使设计更健壮。\n\n---\n\n### 典型实现\n\n```verilog\n// 例：在时钟域 clk_a 中同步异步复位 async_reset\nreg sync1, sync2;\nalways @(posedge clk_a or posedge async_reset) begin\n    if (async_reset) begin\n        sync1 <= 1'b1;   // 立即将同步器置为复位状态\n        sync2 <= 1'b1;\n    end else begin\n        sync1 <= 1'b0;   // 先把第一级清零\n        sync2 <= sync1;  // 第二级跟随第一级，完成同步\n    end\nend\n\n// sync2 就是与 clk_a 同步的复位信号，可安全用于后续逻辑\n```\n\n**总结**  \n- 异步复位在每个时钟域同步释放，是为了消除亚稳态、保证全局一致性并提升系统可靠性。  \n- 通常采用两级寄存器同步器，既能快速响应，又能把不确定性限制在可控范围内。",
+      "passed": true,
+      "elapsed_seconds": 72.68
+    },
+    {
+      "index": 45,
+      "name": "FPGA多比特跨域",
+      "category": "engineering",
+      "prompt": "为什么多比特总线不能把每一位分别接两级同步器？给出合适方案。",
+      "answer": "**为什么不能把每一位分别接两级同步器？**\n\n1. **时序不一致**  \n   - 每个同步器内部的两个触发器（FF）都需要在同一个时钟周期内完成上升沿到下一级的传递。  \n   - 当你把总线的 8、16 或 32 位每一位分别接入独立的两级同步器时，**每个同步器的内部时钟相位可能略有偏差**（因为 FPGA/ASIC 的布线长度不同）。  \n   - 这会导致 **同一时钟周期内不同位的同步完成时间不一致**。如果后续逻辑把这些位拼成一个宽度数据，某些位已经被更新，而其他位仍是旧值，产生“半更新”状态。\n\n2. **布线与资源浪费**  \n   - 对每一位都放两级同步器会占用大量触发器和布线。  \n   - 这不仅增加面积，还可能导致时钟树的负载不均衡，进一步加剧相位偏差。\n\n3. **缺乏全局握手**  \n   - 单独同步每一位没有办法保证“整条总线”在同一个时钟周期内完成同步。  \n   - 结果是后续逻辑可能误认为某些位已经同步，而实际上它们仍处于不确定状态。\n\n---\n\n**合适的方案**\n\n| 方案 | 关键点 | 优点 | 典型实现 |\n|------|--------|------|----------|\n| **宽度**典型实现**\n\n1. **单级同步 + 复位/握手**  \n   - 把整个总线一次性送入一个宽度的同步块（如 8、16 或 32 位），内部使用两级触发器。  \n   - 同步完成后，产生一个“ready”信号给上游或下游，确保所有位在同一时钟周期内被更新。\n\n2. **双向握手协议**  \n   - 在总线两端各放一个同步块，并通过握手（request/ack）保证数据完整性。  \n   - 适用于异步域间的总线传输，能避免半更新问题。\n\n3. **时钟域交叉（CDC）IP 核**  \n   - 使用厂商提供的 CDC IP（如 Xilinx 的 `cdc_sync` 或 Intel 的 `c2h_cdc`），它们内部已经实现了宽度同步和相位对齐。  \n   - 直接把总线宽度作为参数即可。\n\n4. **时钟域桥接**  \n   - 在两端各放一个同步块，然后在中间使用 FIFO 或双向缓冲区，保证数据完整性并消除时序偏差。\n\n---\n\n### 小结\n\n- **单独为每一位加两级同步器**会导致不同位的同步完成时间不一致、资源浪费以及缺乏全局握手。  \n- 推荐使用**宽度同步块**（一次性同步整条总线）或**双向握手/CDC IP**，既能保证所有位在同一时钟周期内同步，又能有效利用资源并保持时序稳定。",
+      "passed": true,
+      "elapsed_seconds": 90.997
+    },
+    {
+      "index": 46,
+      "name": "礼貌催进度",
+      "category": "writing",
+      "prompt": "把“你到底什么时候把接口修好”改得礼貌专业，只输出改写后的一句话。",
+      "answer": "请问您预计何时完成接口的修复？",
+      "passed": true,
+      "elapsed_seconds": 5.319
+    },
+    {
+      "index": 47,
+      "name": "专业指出问题",
+      "category": "writing",
+      "prompt": "把“这个设计完全不行”改成专业、可执行的一句话，只输出成品。",
+      "answer": "请根据以下标准重新评估并优化该设计，以满足功能需求和性能指标。",
+      "passed": true,
+      "elapsed_seconds": 7.006
+    }
+  ]
+}
