@@ -23,6 +23,11 @@ from build_quality_dataset import (
     uncertainty_examples,
 )
 from console_utils import configure_utf8_console
+from performance_curriculum import (
+    performance_curriculum,
+    performance_validation_examples,
+    tag_many,
+)
 from training_quality import is_teacher_row_usable
 
 
@@ -35,6 +40,32 @@ def deduplicate(rows: list[dict]) -> list[dict]:
             seen.add(key)
             result.append(item)
     return result
+
+
+def last_user_prompt(item: dict) -> str:
+    messages = item.get("messages", [])
+    if not isinstance(messages, list):
+        return ""
+    for message in reversed(messages):
+        if isinstance(message, dict) and message.get("role") == "user":
+            return str(message.get("content", "")).strip()
+    return ""
+
+
+def remove_validation_leakage(train_rows: list[dict], val_rows: list[dict]) -> list[dict]:
+    """验证集不得与训练集共享完整样本或相同用户提示。"""
+    train_message_keys = {
+        json.dumps(item.get("messages", []), ensure_ascii=False, sort_keys=True)
+        for item in train_rows
+    }
+    train_prompts = {last_user_prompt(item) for item in train_rows}
+    return [
+        item
+        for item in val_rows
+        if json.dumps(item.get("messages", []), ensure_ascii=False, sort_keys=True)
+        not in train_message_keys
+        and last_user_prompt(item) not in train_prompts
+    ]
 
 
 def advanced_math_examples(rng: random.Random, count: int) -> list[dict]:
@@ -361,27 +392,31 @@ def main() -> None:
 
     rng = random.Random(args.seed + args.round * 1009)
     train_rows: list[dict] = []
-    train_rows.extend(identity_examples())
-    train_rows.extend(fact_examples())
-    train_rows.extend(instruction_examples())
-    train_rows.extend(coding_examples())
-    train_rows.extend(uncertainty_examples())
-    train_rows.extend(daily_chat_examples())
-    train_rows.extend(memory_examples())
-    train_rows.extend(adversarial_examples())
-    train_rows.extend(advanced_math_examples(rng, 720))
-    train_rows.extend(word_problem_examples(rng, 360))
-    train_rows.extend(logic_examples(rng, 260))
-    train_rows.extend(programming_curriculum())
-    train_rows.extend(hard_case_examples(rng, 280))
-    train_rows.extend(writing_and_chat_curriculum())
-    train_rows.extend(image_ocr_examples() * 4)
+    train_rows.extend(tag_many(identity_examples(), "identity"))
+    train_rows.extend(tag_many(fact_examples(), "stable_facts"))
+    train_rows.extend(tag_many(instruction_examples(), "instruction_precision"))
+    train_rows.extend(tag_many(coding_examples(), "coding_debugging"))
+    train_rows.extend(tag_many(uncertainty_examples(), "evidence_uncertainty"))
+    train_rows.extend(tag_many(daily_chat_examples(), "daily_chat"))
+    train_rows.extend(tag_many(memory_examples(), "multi_turn"))
+    train_rows.extend(tag_many(adversarial_examples(), "adversarial"))
+    train_rows.extend(tag_many(advanced_math_examples(rng, 720), "quantitative_reasoning"))
+    train_rows.extend(tag_many(word_problem_examples(rng, 360), "quantitative_reasoning"))
+    train_rows.extend(tag_many(logic_examples(rng, 260), "logic"))
+    train_rows.extend(tag_many(programming_curriculum(), "coding_debugging"))
+    train_rows.extend(tag_many(hard_case_examples(rng, 280), "hard_cases"))
+    train_rows.extend(tag_many(writing_and_chat_curriculum(), "instruction_precision"))
+    train_rows.extend(tag_many(image_ocr_examples() * 4, "vision_reasoning"))
+    train_rows.extend(performance_curriculum(rng))
     teacher_rows, skipped_teacher_rows = load_teacher_rows(args.round)
-    train_rows.extend(teacher_rows)
+    train_rows.extend(tag_many(teacher_rows, "teacher_distillation"))
     train_rows = deduplicate(train_rows)
     rng.shuffle(train_rows)
 
-    val_rows = heldout_validation(args.seed + args.round * 1009 + 999_983)
+    val_seed = args.seed + args.round * 1009 + 999_983
+    val_rows = tag_many(heldout_validation(val_seed), "legacy_validation")
+    val_rows.extend(performance_validation_examples(random.Random(val_seed + 17)))
+    val_rows = remove_validation_leakage(train_rows, deduplicate(val_rows))
     write_jsonl(Path("data/quality_sft_train.jsonl"), train_rows)
     write_jsonl(Path("data/quality_sft_val.jsonl"), val_rows)
     archive = Path(f"data/rounds/round_{args.round:03d}_train.jsonl")

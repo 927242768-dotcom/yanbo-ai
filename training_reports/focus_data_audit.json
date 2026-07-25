@@ -1,0 +1,71 @@
+{
+  "train": {
+    "rows": 548,
+    "unique_pairs": 548,
+    "duplicate_pairs": 0,
+    "unique_prompts": 548,
+    "duplicate_prompts": 0,
+    "empty_rows": [],
+    "unusable_answers": [],
+    "unbalanced_code_fences": [],
+    "assistant_length": {
+      "min": 2,
+      "p50": 37,
+      "p95": 167,
+      "max": 210
+    },
+    "categories": {
+      "focus_ambiguity": 2,
+      "focus_average": 150,
+      "focus_cdc": 12,
+      "focus_git": 18,
+      "focus_grounding": 10,
+      "focus_logic": 2,
+      "focus_python": 59,
+      "focus_ratio": 180,
+      "focus_sentence_count": 12,
+      "focus_sql": 8,
+      "focus_testing": 4,
+      "replay_adversarial": 4,
+      "replay_coding": 8,
+      "replay_facts": 53,
+      "replay_identity": 10,
+      "replay_instruction": 10,
+      "replay_uncertainty": 6
+    }
+  },
+  "validation": {
+    "rows": 11,
+    "unique_pairs": 11,
+    "duplicate_pairs": 0,
+    "unique_prompts": 11,
+    "duplicate_prompts": 0,
+    "empty_rows": [],
+    "unusable_answers": [],
+    "unbalanced_code_fences": [],
+    "assistant_length": {
+      "min": 22,
+      "p50": 41,
+      "p95": 130,
+      "max": 169
+    },
+    "categories": {
+      "focus_ambiguity": 1,
+      "focus_average": 1,
+      "focus_cdc": 1,
+      "focus_git": 1,
+      "focus_grounding": 1,
+      "focus_logic": 1,
+      "focus_python": 1,
+      "focus_ratio": 1,
+      "focus_sentence_count": 1,
+      "focus_sql": 1,
+      "focus_testing": 1
+    }
+  },
+  "cross_split": {
+    "prompt_leakage_count": 0,
+    "pair_leakage_count": 0,
+    "prompt_leakage_examples": []
+  }
+}

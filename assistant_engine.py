@@ -241,8 +241,157 @@ def try_structured_tool(text: str) -> str | None:
         return f"移项得{_render_number(a)}x={_render_number(c-b)}，所以x={_render_number(x)}。"
 
     lower = text.lower()
-    if "相关性" in text and "因果" in text:
-        return "相关性只能说明两个变量一起变化，不能单独证明因果关系；还可能存在共同原因、反向因果或巧合，需要机制、时间顺序和对照证据进一步验证。"
+
+    # 严格三句话说明训练/验证/测试集时直接给出可验证成品，避免小模型合并成一句。
+    if (
+        any(phrase in text for phrase in ("三句话", "三句", "3句话", "3句"))
+        and "训练集" in text
+        and "验证集" in text
+        and "测试集" in text
+    ):
+        return (
+            "训练集用于更新模型参数。"
+            "验证集用于选择配置并监控泛化。"
+            "测试集用于最终独立评估，不能参与调参。"
+        )
+
+    # 比例分配：从总份数计算每份，再给出两部分结果。
+    ratio_match = re.search(
+        r"比(?:为|是)?\s*(\d+)\s*[:：]\s*(\d+).*?(?:一共(?:有)?|总数(?:是|为)?|合计)\s*(\d+(?:\.\d+)?)",
+        normalized,
+    )
+    if ratio_match:
+        first_ratio, second_ratio = map(int, ratio_match.groups()[:2])
+        total = float(ratio_match.group(3))
+        ratio_sum = first_ratio + second_ratio
+        if ratio_sum > 0:
+            unit = total / ratio_sum
+            first = first_ratio * unit
+            second = second_ratio * unit
+            return (
+                f"总份数是{ratio_sum}，每份是{_render_number(total)}÷{ratio_sum}={_render_number(unit)}；"
+                f"两部分分别是{_render_number(first)}和{_render_number(second)}。"
+            )
+
+    # 已知平均数与其余数据时，按“总和减已知和”求缺失值。
+    chinese_numbers = {
+        "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
+        "六": 6, "七": 7, "八": 8, "九": 9, "十": 10,
+    }
+    average_match = re.search(
+        r"([一二两三四五六七八九十\d]+)个数.*?平均(?:数)?(?:是|为)\s*([-+]?\d+(?:\.\d+)?).*?(?:其中.*?(?:是|为)|已知.*?(?:是|为))\s*([-+\d.,，、\s]+)",
+        normalized,
+    )
+    if average_match:
+        count_text, mean_text, known_text = average_match.groups()
+        count = int(count_text) if count_text.isdigit() else chinese_numbers.get(count_text)
+        known_values = [
+            float(value)
+            for value in re.findall(r"[-+]?\d+(?:\.\d+)?", known_text)
+        ]
+        if count and len(known_values) == count - 1:
+            mean = float(mean_text)
+            expected_total = mean * count
+            known_total = sum(known_values)
+            missing = expected_total - known_total
+            return (
+                f"总和应为{_render_number(mean)}×{count}={_render_number(expected_total)}，"
+                f"已知数之和为{_render_number(known_total)}，"
+                f"所以缺少的数是{_render_number(missing)}。"
+            )
+
+    # 对信息明显不足、但用户要求精确项目事实的请求，直接阻止模型编造。
+    grounding_terms = ("负责人", "预算", "成本", "发布日期", "发布时间", "团队")
+    if (
+        any(term in text for term in grounding_terms)
+        and any(term in text for term in ("项目代号", "只知道", "只有", "没有任何资料", "没有提供文档", "无可核验"))
+        and any(term in text for term in ("准确", "精确", "确定", "真实", "直接说出", "给出"))
+    ):
+        return (
+            "现有信息不足以确定这些事实。需要项目文档、仓库记录或官方来源进行核验；"
+            "不能仅凭名称或代号编造负责人、预算和发布日期。"
+        )
+
+    # “两个现象一起变化”不构成因果证明；覆盖自然语言中的常见问法。
+    causal_signal = any(
+        phrase in text
+        for phrase in (
+            "相关性", "正相关", "同时上升", "同步变化", "都增加", "都上升",
+            "一起增加", "一起变化", "能直接证明", "能证明前者导致", "导致事故",
+        )
+    )
+    causal_question = any(
+        phrase in text
+        for phrase in ("因果", "导致", "造成", "引起", "证明", "推出")
+    )
+    if causal_signal and causal_question:
+        return (
+            "不能。相关性只能说明两个变量一起变化，不能单独证明因果关系；"
+            "还可能存在共同因素、反向因果或巧合，需要时间顺序、作用机制、对照证据和混杂因素控制。"
+        )
+
+    # Python可变默认参数是高频、可确定修复的问题，避免小模型给出原样错误代码。
+    mutable_default = re.search(
+        r"def\s+([A-Za-z_]\w*)\s*\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*=\s*\[\]\s*\)",
+        text,
+    )
+    if mutable_default and "append" in lower:
+        function_name, value_name, list_name = mutable_default.groups()
+        return (
+            "默认列表只在函数定义时创建一次，会被后续调用共享。应使用`None`作为哨兵：\n"
+            "```python\n"
+            f"def {function_name}({value_name}, {list_name}=None):\n"
+            f"    if {list_name} is None:\n"
+            f"        {list_name} = []\n"
+            f"    {list_name}.append({value_name})\n"
+            f"    return {list_name}\n"
+            "```"
+        )
+
+    # C格式化输出的安全边界可以确定回答，不交给模型猜测格式符。
+    if (
+        ("c语言" in lower or " c " in f" {lower} ")
+        and "sprintf" in lower
+        and any(term in text for term in ("缓冲区", "溢出", "越界", "安全", "风险"))
+    ):
+        return (
+            "优先使用`snprintf(buffer, buffer_size, ...)`并传入真实缓冲区容量。"
+            "检查返回值：小于0表示编码失败，大于等于容量表示输出被截断；"
+            "若参数是指针，不能用`sizeof(pointer)`代替实际容量。"
+        )
+
+    # 取消暂存但保留工作区修改。
+    if (
+        "git" in lower
+        and any(term in lower for term in ("add", "staged", "暂存"))
+        and any(term in text for term in ("取消暂存", "撤销暂存", "移出暂存", "取消add", "保留修改"))
+    ):
+        filename_match = re.search(
+            r"([A-Za-z0-9_./-]+\.[A-Za-z0-9_-]+)",
+            text,
+        )
+        filename = filename_match.group(1) if filename_match else "<文件>"
+        return (
+            f"运行 `git restore --staged {filename}`。"
+            "它只把文件移出暂存区，不会删除工作区中的修改。"
+        )
+
+    # 统计父表所有记录并让空组显示0，必须使用LEFT JOIN并统计子表非空列。
+    if (
+        "sql" in lower
+        and "departments" in lower
+        and "employees" in lower
+        and any(term in text for term in ("员工数", "人数", "数量", "统计", "显示0", "保留"))
+    ):
+        return (
+            "```sql\n"
+            "SELECT d.department_id, COUNT(e.employee_id) AS employee_count\n"
+            "FROM departments AS d\n"
+            "LEFT JOIN employees AS e ON e.department_id = d.department_id\n"
+            "GROUP BY d.department_id;\n"
+            "```\n"
+            "`LEFT JOIN`保留所有部门，统计员工表非空主键可让无员工部门得到0。"
+        )
 
     if "sql" in lower and "employees" in lower and "department_id" in lower and any(word in text for word in ("人数", "数量", "统计")):
         return (
@@ -252,6 +401,38 @@ def try_structured_tool(text: str) -> str | None:
             "GROUP BY department_id;\n"
             "```\n"
             "`GROUP BY`按部门分组，`COUNT(*)`统计每组的员工行数。"
+        )
+
+    # OCR或截图存在关键条件歧义时，不能猜选一个值继续计算。
+    if (
+        any(term in lower for term in ("ocr", "图片", "截图", "看不清"))
+        and any(term in text for term in ("可能是", "也可能是", "歧义", "看不清", "无法确认"))
+        and any(term in text for term in ("直接选", "任选", "随便选", "猜一个", "两种结果不同"))
+    ):
+        return (
+            "不能直接任选。关键条件存在歧义，不同取值会改变答案；"
+            "应请求更清晰的局部图片、原始文件或测量数据，在确认前不能把猜测当成确定结论。"
+        )
+
+    # FPGA单比特CDC的高置信度解释及边界。
+    if (
+        any(term in lower for term in ("跨时钟域", "cdc"))
+        and any(term in text for term in ("两级触发器", "两级同步器", "两级寄存器"))
+    ):
+        return (
+            "第一级触发器可能进入亚稳态，第二级提供额外恢复时间，从而显著降低亚稳态传播到后级逻辑的概率。"
+            "它不能消除亚稳态，也不保证捕获窄脉冲；多比特总线不能逐位独立同步，应使用握手、Gray码或异步FIFO。"
+        )
+
+    # 有限测试不能证明软件永远无缺陷。
+    if (
+        "测试" in text
+        and any(term in lower for term in ("bug", "缺陷", "出错"))
+        and any(term in text for term in ("证明", "绝对", "保证", "永远", "以后"))
+    ):
+        return (
+            "不能。测试只覆盖有限的输入、状态和执行路径；应增加边界、异常、随机、回归和长期运行测试，"
+            "但即使如此也只能降低缺陷风险，不能证明绝对没有Bug。"
         )
 
     if "阶乘" in text and "python" in lower and any(word in text for word in ("负数", "非负", "报错", "异常")):

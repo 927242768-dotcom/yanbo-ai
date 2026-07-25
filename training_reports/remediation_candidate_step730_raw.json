@@ -1,0 +1,191 @@
+{
+  "adapter": "adapters\\yanbo-v3-remediation-candidate-lora",
+  "execution": "raw",
+  "passed": 8,
+  "total": 18,
+  "score": 0.4444,
+  "categories": {
+    "coding": {
+      "passed": 2,
+      "total": 5
+    },
+    "engineering": {
+      "passed": 0,
+      "total": 2
+    },
+    "grounding": {
+      "passed": 0,
+      "total": 1
+    },
+    "instruction": {
+      "passed": 1,
+      "total": 2
+    },
+    "logic": {
+      "passed": 1,
+      "total": 2
+    },
+    "math": {
+      "passed": 3,
+      "total": 3
+    },
+    "tools": {
+      "passed": 0,
+      "total": 1
+    },
+    "vision_reasoning": {
+      "passed": 0,
+      "total": 1
+    },
+    "writing": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "name": "严格两项输出",
+      "category": "instruction",
+      "prompt": "只给两个排查程序卡死的步骤，不要前言、解释和总结。",
+      "answer": "1. 首先，检查程序是否已加载并启动。如果未加载或未启动，尝试重新启动程序。\n2. 如果程序已加载且启动正常，检查是否有内存不足的问题。可以尝试增加RAM或减少CPU负载。",
+      "passed": true,
+      "elapsed_seconds": 9.104
+    },
+    {
+      "name": "严格三句话",
+      "category": "instruction",
+      "prompt": "请用三句话说明训练集、验证集和测试集各自的作用。",
+      "answer": "训练集用于构建模型的参数，验证集用来评估模型性能，而测试集则用于评估模型在新数据上的表现。",
+      "passed": false,
+      "elapsed_seconds": 5.129
+    },
+    {
+      "name": "礼貌改写成品",
+      "category": "writing",
+      "prompt": "把‘你怎么还没把测试文件发来’改得礼貌专业，只输出改写后的句子。",
+      "answer": "“您是否需要我协助将测试文件发送给您？”",
+      "passed": true,
+      "elapsed_seconds": 2.781
+    },
+    {
+      "name": "信息不足不编造",
+      "category": "grounding",
+      "prompt": "项目代号是BlueFox。请告诉我它准确的负责人、发布日期和预算。",
+      "answer": "抱歉，我无法提供关于特定项目的详细信息，因为这需要访问外部数据库或API来获取准确的数据。不过，我可以告诉你一般的信息：\n\n- 负责人：通常由项目经理或高级管理人员负责。\n- 发布日期：通常是项目启动后不久，具体取决于项目的规模和时间表。\n- 预算：这个信息会根据项目的规模、范围和目标而有所不同，可能包括人力成本、材料费用、软件开发费用和其他相关费用。\n\n如果你有具体的项目代号或者更详细的信息，我可以尝试帮助你查找相关信息。",
+      "passed": false,
+      "elapsed_seconds": 18.704
+    },
+    {
+      "name": "相关不等于因果",
+      "category": "logic",
+      "prompt": "某城市雨伞销量和交通事故都上升，能直接证明买雨伞导致事故吗？",
+      "answer": "不能。购买雨伞只是增加了出行需求，但并不必然导致更多的交通事故。交通事故可能由多种因素引起，包括但不限于天气变化、交通拥堵、车辆故障等。",
+      "passed": false,
+      "elapsed_seconds": 6.363
+    },
+    {
+      "name": "肯定后件识别",
+      "category": "logic",
+      "prompt": "如果服务器宕机，网站会打不开。现在网站打不开，能必然推出服务器宕机吗？",
+      "answer": "不能。因为服务器宕机只是导致网站无法访问的原因之一，而不仅仅是原因。",
+      "passed": true,
+      "elapsed_seconds": 3.647
+    },
+    {
+      "name": "逆向两步代数",
+      "category": "math",
+      "prompt": "一个数减去4以后再乘3等于27，这个数是多少？写出必要步骤。",
+      "answer": "设这个数为 \\( x \\)。根据题意，我们有方程：\n\n\\[ (x - 4) \\times 3 = 27 \\]\n\n解这个方程找到 \\( x \\) 的值。\n\n首先，将两边同时除以 3 得到：\n\n\\[ x - 4 = 9 \\]\n\n然后，将两边加上 4 得到：\n\n\\[ x = 13 \\]\n\n所以，这个数是 13。",
+      "passed": true,
+      "elapsed_seconds": 15.621
+    },
+    {
+      "name": "比例分配",
+      "category": "math",
+      "prompt": "红球和蓝球数量比为3:5，一共有40个球，两种球各有多少个？",
+      "answer": "设红球有\\(3x\\)个，蓝球有\\(5x\\)个。根据题目，我们有方程：\n\n\\[3x + 5x = 40\\]\n\n解这个方程得到：\n\n\\[8x = 40\\]\n\n所以：\n\n\\[x = 5\\]\n\n因此，红球有\\(3 \\times 5 = 15\\)个，蓝球有\\(5 \\times 5 = 25\\)个。",
+      "passed": true,
+      "elapsed_seconds": 15.629
+    },
+    {
+      "name": "缺失平均数",
+      "category": "math",
+      "prompt": "五个数平均为12，其中四个数是8、10、13、14，第五个数是多少？",
+      "answer": "已知五个数的平均值为12，这意味着它们的总和是 \\(12 \\times 5 = 60\\)。已知的四个数是8、10、13、14，所以它们的总和是 \\(8 + 10 + 13 + 14 = 45\\)。因此，第五个数是 \\(60 - 45 = 15\\)。",
+      "passed": true,
+      "elapsed_seconds": 14.736
+    },
+    {
+      "name": "Python空输入边界",
+      "category": "coding",
+      "prompt": "写一个Python函数求数值列表平均值；空列表必须抛出ValueError。",
+      "answer": "```python\ndef calculate_average(numbers):\n    if not numbers:\n        raise ValueError(\"The list is empty.\")\n    \n    total = sum(numbers)\n    average = total / len(numbers)\n    return average\n\n# 测试示例\ntry:\n    print(calculate_average([]))  # 应该抛出ValueError\nexcept ValueError as e:\n    print(e)  # 输出: The list is empty.\n```",
+      "passed": true,
+      "elapsed_seconds": 13.829
+    },
+    {
+      "name": "Python默认参数修复",
+      "category": "coding",
+      "prompt": "修复这个函数的共享默认列表问题：def collect(x, items=[]): items.append(x); return items",
+      "answer": "在Python中，`items`是一个列表变量，它包含所有传递给函数 `collect` 的元素。因此，当你调用 `collect` 函数并传入一个空列表时，它会创建一个新的列表并将其作为参数传递给 `append` 方法。所以，正确的代码应该是：\n\n```python\ndef collect(x, items=[]):\n    items.append(x)\n    return items\n```\n\n这样，当调用 `collect` 函数时，它会将输入的值添加到 `items` 列表中。",
+      "passed": false,
+      "elapsed_seconds": 17.813
+    },
+    {
+      "name": "C缓冲区安全",
+      "category": "coding",
+      "prompt": "C语言拼接格式化字符串时，怎样降低sprintf造成缓冲区溢出的风险？",
+      "answer": "在C语言中，当使用`sprintf`函数进行格式化字符串拼接时，可以考虑以下几种方法来减少缓冲区溢出的风险：\n\n1. **使用`%s`格式**：如果字符串长度固定且不大于`sizeof(char) * 8`（即最多8个字符），可以直接使用`\"%s\"`格式。这样即使输入数据超过这个限制，也不会导致缓冲区溢出。\n\n2. **使用`%p`格式**：对于较长的字符串，可以使用`\"%p\"`格式，它会将字符串转换为内存地址，从而避免了缓冲区溢出的问题。\n\n3. **使用`%x`格式**：对于整数，可以使用`\"%x\"`格式，这会将整数转换为十六进制表示，从而避免了缓冲区溢出的问题。\n\n4. **使用`%d`格式**：对于整数，可以使用`\"%d\"`格式，这会将整数转换为十进制形式，从而避免了缓冲区溢出的问题。\n\n5.",
+      "passed": false,
+      "elapsed_seconds": 34.23
+    },
+    {
+      "name": "Git取消暂存",
+      "category": "tools",
+      "prompt": "README.md已经git add，但我想保留修改并取消暂存，命令是什么？",
+      "answer": "在Git中，如果你想保留修改而不提交到暂存区，可以使用`git add .`命令。这会将所有未提交的更改添加到暂存区，然后你可以继续进行其他操作。如果需要取消暂存，可以使用`git reset --hard HEAD^`来移除暂存区中的所有更改。",
+      "passed": false,
+      "elapsed_seconds": 11.453
+    },
+    {
+      "name": "SQL保留零员工部门",
+      "category": "coding",
+      "prompt": "写SQL统计每个部门的员工数，部门表departments，员工表employees，并保留员工数为0的部门。",
+      "answer": "```sql\nSELECT department, COUNT(*) AS employee_count\nFROM employees\nWHERE department IS NULL\nGROUP BY department;\n```",
+      "passed": false,
+      "elapsed_seconds": 4.677
+    },
+    {
+      "name": "复杂度判断",
+      "category": "coding",
+      "prompt": "外层循环n次，内层每次也循环n次，循环体是常数操作，时间复杂度是什么？说明一句原因。",
+      "answer": "时间复杂度是O(n^2)。因为每次循环都会执行n*n的操作，所以总共有n个循环，每个循环都进行n*n的操作，因此总的时间开销是n*n。",
+      "passed": true,
+      "elapsed_seconds": 7.526
+    },
+    {
+      "name": "OCR关键歧义",
+      "category": "vision_reasoning",
+      "prompt": "图片中的电阻值可能是1kΩ也可能是7kΩ，两种结果不同。现在图片看不清，请直接选一个计算。",
+      "answer": "请提供图片中的电阻值，我会根据实际情况进行计算并选择合适的答案。",
+      "passed": false,
+      "elapsed_seconds": 3.572
+    },
+    {
+      "name": "FPGA跨时钟域",
+      "category": "engineering",
+      "prompt": "为什么单比特控制信号跨时钟域时常用两级触发器同步？它不适合直接解决什么问题？",
+      "answer": "因为单比特控制信号需要在时钟域内进行同步，而两级触发器可以同时控制两个输入端，从而确保它们在同一时间点上达到预期状态。然而，这种设计并不适用于处理其他类型的同步需求，如多比特控制信号或复杂的时序逻辑电路。",
+      "passed": false,
+      "elapsed_seconds": 10.859
+    },
+    {
+      "name": "测试不能证明无Bug",
+      "category": "engineering",
+      "prompt": "一个程序连续通过了100次测试，能证明它以后绝对没有Bug吗？",
+      "answer": "不能。程序通过了100次测试并不能证明它以后绝对没有Bug。这只是一个统计结果，不代表程序在其他情况下也不会出错。",
+      "passed": false,
+      "elapsed_seconds": 6.195
+    }
+  ]
+}

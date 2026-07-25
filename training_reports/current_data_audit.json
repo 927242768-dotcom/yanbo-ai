@@ -1,0 +1,62 @@
+{
+  "train": {
+    "rows": 2082,
+    "unique_pairs": 2082,
+    "duplicate_pairs": 0,
+    "unique_prompts": 2071,
+    "duplicate_prompts": 11,
+    "empty_rows": [],
+    "unusable_answers": [],
+    "unbalanced_code_fences": [],
+    "assistant_length": {
+      "min": 2,
+      "p50": 27,
+      "p95": 68,
+      "max": 406
+    },
+    "categories": {
+      "adversarial": 5,
+      "coding_debugging": 120,
+      "daily_chat": 20,
+      "evidence_uncertainty": 38,
+      "hard_cases": 91,
+      "identity": 12,
+      "instruction_precision": 80,
+      "logic": 71,
+      "multi_turn": 16,
+      "quantitative_reasoning": 1545,
+      "stable_facts": 56,
+      "teacher_distillation": 12,
+      "vision_reasoning": 16
+    }
+  },
+  "validation": {
+    "rows": 206,
+    "unique_pairs": 206,
+    "duplicate_pairs": 0,
+    "unique_prompts": 206,
+    "duplicate_prompts": 0,
+    "empty_rows": [],
+    "unusable_answers": [],
+    "unbalanced_code_fences": [],
+    "assistant_length": {
+      "min": 10,
+      "p50": 25,
+      "p95": 48,
+      "max": 239
+    },
+    "categories": {
+      "coding_debugging": 6,
+      "engineering": 4,
+      "evidence_uncertainty": 5,
+      "instruction_precision": 12,
+      "legacy_validation": 119,
+      "quantitative_reasoning": 60
+    }
+  },
+  "cross_split": {
+    "prompt_leakage_count": 0,
+    "pair_leakage_count": 0,
+    "prompt_leakage_examples": []
+  }
+}

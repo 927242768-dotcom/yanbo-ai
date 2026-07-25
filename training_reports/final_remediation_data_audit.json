@@ -1,0 +1,69 @@
+{
+  "train": {
+    "rows": 1680,
+    "unique_pairs": 1680,
+    "duplicate_pairs": 0,
+    "unique_prompts": 1680,
+    "duplicate_prompts": 0,
+    "empty_rows": [],
+    "unusable_answers": [],
+    "unbalanced_code_fences": [],
+    "assistant_length": {
+      "min": 2,
+      "p50": 68,
+      "p95": 195,
+      "max": 235
+    },
+    "categories": {
+      "remedy_c_buffer": 140,
+      "remedy_causality": 140,
+      "remedy_cdc": 140,
+      "remedy_git_unstage": 140,
+      "remedy_grounding": 140,
+      "remedy_ocr_ambiguity": 140,
+      "remedy_python_default": 140,
+      "remedy_sentence_count": 140,
+      "remedy_sql_left_join": 140,
+      "remedy_testing_limits": 140,
+      "replay_adversarial": 10,
+      "replay_coding": 21,
+      "replay_facts": 168,
+      "replay_identity": 36,
+      "replay_instruction": 33,
+      "replay_uncertainty": 12
+    }
+  },
+  "validation": {
+    "rows": 10,
+    "unique_pairs": 10,
+    "duplicate_pairs": 0,
+    "unique_prompts": 10,
+    "duplicate_prompts": 0,
+    "empty_rows": [],
+    "unusable_answers": [],
+    "unbalanced_code_fences": [],
+    "assistant_length": {
+      "min": 45,
+      "p50": 55,
+      "p95": 145,
+      "max": 160
+    },
+    "categories": {
+      "remedy_c_buffer": 1,
+      "remedy_causality": 1,
+      "remedy_cdc": 1,
+      "remedy_git_unstage": 1,
+      "remedy_grounding": 1,
+      "remedy_ocr_ambiguity": 1,
+      "remedy_python_default": 1,
+      "remedy_sentence_count": 1,
+      "remedy_sql_left_join": 1,
+      "remedy_testing_limits": 1
+    }
+  },
+  "cross_split": {
+    "prompt_leakage_count": 0,
+    "pair_leakage_count": 0,
+    "prompt_leakage_examples": []
+  }
+}

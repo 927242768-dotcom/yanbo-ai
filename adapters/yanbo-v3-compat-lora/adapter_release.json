@@ -1,0 +1,36 @@
+{
+  "promoted_at": "2026-07-25T10:55:42",
+  "source": "adapters\\yanbo-v3-focus-candidate-lora",
+  "target": "adapters\\yanbo-v3-compat-lora",
+  "step": 700,
+  "attempted_step": 700,
+  "validation_loss": 2.28482940251177,
+  "initial_validation_loss": 2.3046233464371073,
+  "selected_checkpoint": "best_validation",
+  "files": {
+    "adapter_config.json": {
+      "size_bytes": 1066,
+      "sha256": "9154d50fdf1f43504711e3f2d427d22b65698febd2525fb7d157e44bae4e043e"
+    },
+    "adapter_model.safetensors": {
+      "size_bytes": 2175168,
+      "sha256": "9a84d3c1e02e3bd154c331b25846c5d464df71551cb6092362b4710422fa295a"
+    },
+    "training_state.json": {
+      "size_bytes": 1125,
+      "sha256": "90aec451c2c458d757ad441a2d8da5ea1618f9b99d65af3da3702cf11eab7cd1"
+    },
+    "README.md": {
+      "size_bytes": 5198,
+      "sha256": "80405734fbcb85f27fcab9352cd057c8e98a121df5c9c1fbc48532bcbcc5bafa"
+    },
+    "chat_template.jinja": {
+      "size_bytes": 2561,
+      "sha256": "8aa40ce145adb73cb3a75194dc0224702a95850ec5275cabb728496bbd749fc6"
+    },
+    "tokenizer_config.json": {
+      "size_bytes": 722,
+      "sha256": "b3d4aae9670f7c2de3e3b32675b0118e7e7b517544f5ab32efe04bd74f2238c1"
+    }
+  }
+}

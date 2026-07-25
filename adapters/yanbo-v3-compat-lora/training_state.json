@@ -1,0 +1,45 @@
+{
+  "step": 700,
+  "attempted_step": 700,
+  "max_steps": 700,
+  "val_loss": 2.28482940251177,
+  "best_val_loss": 2.28482940251177,
+  "best_step": 700,
+  "initial_val_loss": 2.3046233464371073,
+  "model": "models\\yanbo-v3-compat",
+  "initialized_from": "adapters\\yanbo-v3-focus-candidate-lora",
+  "sampling_mode": "类别平方根平衡采样",
+  "category_counts": {
+    "focus_ambiguity": 2,
+    "focus_average": 150,
+    "focus_cdc": 12,
+    "focus_git": 18,
+    "focus_grounding": 10,
+    "focus_logic": 2,
+    "focus_python": 59,
+    "focus_ratio": 180,
+    "focus_sentence_count": 12,
+    "focus_sql": 8,
+    "focus_testing": 4,
+    "replay_adversarial": 4,
+    "replay_coding": 8,
+    "replay_facts": 53,
+    "replay_identity": 10,
+    "replay_instruction": 10,
+    "replay_uncertainty": 6
+  },
+  "history": [
+    {
+      "step": 690,
+      "val_loss": 2.3046233464371073,
+      "selected": true
+    },
+    {
+      "step": 700,
+      "val_loss": 2.28482940251177,
+      "selected": true
+    }
+  ],
+  "selected_checkpoint": "best_validation",
+  "elapsed_seconds": 58.497
+}

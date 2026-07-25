@@ -6,9 +6,16 @@ remote_access.json
 __pycache__/
 *.pyc
 
-# 模型、训练产物与用户私有知识资料
+# 基础模型、候选训练产物与用户私有知识资料
 models/
-adapters/
+adapters/*
+!adapters/yanbo-v3-compat-lora/
+adapters/yanbo-v3-compat-lora/*
+!adapters/yanbo-v3-compat-lora/README.md
+!adapters/yanbo-v3-compat-lora/adapter_config.json
+!adapters/yanbo-v3-compat-lora/adapter_model.safetensors
+!adapters/yanbo-v3-compat-lora/training_state.json
+!adapters/yanbo-v3-compat-lora/adapter_release.json
 knowledge/*
 !knowledge/README.md
 

@@ -1,0 +1,191 @@
+{
+  "adapter": "adapters\\yanbo-v3-candidate-lora",
+  "execution": "raw",
+  "passed": 7,
+  "total": 18,
+  "score": 0.3889,
+  "categories": {
+    "coding": {
+      "passed": 3,
+      "total": 5
+    },
+    "engineering": {
+      "passed": 0,
+      "total": 2
+    },
+    "grounding": {
+      "passed": 0,
+      "total": 1
+    },
+    "instruction": {
+      "passed": 1,
+      "total": 2
+    },
+    "logic": {
+      "passed": 1,
+      "total": 2
+    },
+    "math": {
+      "passed": 1,
+      "total": 3
+    },
+    "tools": {
+      "passed": 0,
+      "total": 1
+    },
+    "vision_reasoning": {
+      "passed": 0,
+      "total": 1
+    },
+    "writing": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "name": "严格两项输出",
+      "category": "instruction",
+      "prompt": "只给两个排查程序卡死的步骤，不要前言、解释和总结。",
+      "answer": "1. 打开程序，检查是否有内存泄漏或未关闭资源的情况。\n2. 检查是否有异常的输入数据导致程序崩溃。",
+      "passed": true,
+      "elapsed_seconds": 5.618
+    },
+    {
+      "name": "严格三句话",
+      "category": "instruction",
+      "prompt": "请用三句话说明训练集、验证集和测试集各自的作用。",
+      "answer": "训练集用于构建模型的参数，验证集用来评估模型性能，而测试集则用于评估模型在新数据上的表现。",
+      "passed": false,
+      "elapsed_seconds": 4.919
+    },
+    {
+      "name": "礼貌改写成品",
+      "category": "writing",
+      "prompt": "把‘你怎么还没把测试文件发来’改得礼貌专业，只输出改写后的句子。",
+      "answer": "“您是否需要我协助将测试文件发送给您？”",
+      "passed": true,
+      "elapsed_seconds": 2.679
+    },
+    {
+      "name": "信息不足不编造",
+      "category": "grounding",
+      "prompt": "项目代号是BlueFox。请告诉我它准确的负责人、发布日期和预算。",
+      "answer": "抱歉，我无法提供您所要求的信息。",
+      "passed": false,
+      "elapsed_seconds": 2.309
+    },
+    {
+      "name": "相关不等于因果",
+      "category": "logic",
+      "prompt": "某城市雨伞销量和交通事故都上升，能直接证明买雨伞导致事故吗？",
+      "answer": "不能。购买雨伞只是增加了出行的便利性，但并不能改变交通事故的发生频率。",
+      "passed": false,
+      "elapsed_seconds": 3.588
+    },
+    {
+      "name": "肯定后件识别",
+      "category": "logic",
+      "prompt": "如果服务器宕机，网站会打不开。现在网站打不开，能必然推出服务器宕机吗？",
+      "answer": "不能。因为服务器宕机只是导致网站无法访问的原因之一，而不仅仅是原因。",
+      "passed": true,
+      "elapsed_seconds": 3.439
+    },
+    {
+      "name": "逆向两步代数",
+      "category": "math",
+      "prompt": "一个数减去4以后再乘3等于27，这个数是多少？写出必要步骤。",
+      "answer": "设这个数为x，则根据题意有：\n\n\\[ (x - 4) \\times 3 = 27 \\]\n\n解这个方程找到x的值：\n\n\\[ x - 4 = \\frac{27}{3} \\]\n\\[ x - 4 = 9 \\]\n\\[ x = 9 + 4 \\]\n\\[ x = 13 \\]\n\n所以这个数是13。",
+      "passed": true,
+      "elapsed_seconds": 13.065
+    },
+    {
+      "name": "比例分配",
+      "category": "math",
+      "prompt": "红球和蓝球数量比为3:5，一共有40个球，两种球各有多少个？",
+      "answer": "设红球有\\(x\\)个，蓝球有\\(y\\)个。根据题目，我们有两个方程：\n\n1. \\(x + y = 40\\)\n2. \\(\\frac{x}{y} = \\frac{3}{5}\\)\n\n从第二个方程可以得到：\\(5x = 3y\\) 或者 \\(y = \\frac{5}{3}x\\)。\n\n将这个关系代入第一个方程中，得到：\\(x + \\frac{5}{3}x = 40\\)。\n\n解这个方程，得：\\(x = 20\\)。\n\n所以，红球有20个，蓝球有10个。",
+      "passed": false,
+      "elapsed_seconds": 21.515
+    },
+    {
+      "name": "缺失平均数",
+      "category": "math",
+      "prompt": "五个数平均为12，其中四个数是8、10、13、14，第五个数是多少？",
+      "answer": "这四个数的总和是 \\(8 + 10 + 13 + 14 = 45\\)。所以第五个数是 \\(12 - 45 = -33\\)。",
+      "passed": false,
+      "elapsed_seconds": 7.141
+    },
+    {
+      "name": "Python空输入边界",
+      "category": "coding",
+      "prompt": "写一个Python函数求数值列表平均值；空列表必须抛出ValueError。",
+      "answer": "```python\ndef average(numbers):\n    if not numbers:\n        raise ValueError(\"Cannot compute the average of an empty list.\")\n    \n    return sum(numbers) / len(numbers)\n```",
+      "passed": true,
+      "elapsed_seconds": 5.708
+    },
+    {
+      "name": "Python默认参数修复",
+      "category": "coding",
+      "prompt": "修复这个函数的共享默认列表问题：def collect(x, items=[]): items.append(x); return items",
+      "answer": "在Python中，`items`是一个列表，所以当尝试将一个元素添加到它后面时，会抛出一个`TypeError`。为了修复这个问题，可以使用`extend()`方法来扩展列表。这样，如果需要添加多个元素，可以直接调用`extend()`方法。例如：\n\n```python\ndef collect(x, items=[]):\n    items.append(x)\n    return items\n```\n\n现在，这个函数应该能正确处理添加多个元素的情况了。",
+      "passed": false,
+      "elapsed_seconds": 13.889
+    },
+    {
+      "name": "C缓冲区安全",
+      "category": "coding",
+      "prompt": "C语言拼接格式化字符串时，怎样降低sprintf造成缓冲区溢出的风险？",
+      "answer": "在C语言中，当使用sprintf函数进行格式化字符串拼接时，如果输入的数据长度超过缓冲区的最大容量，可能会导致缓冲区溢出。为了避免这种情况，可以采取以下措施：\n\n1. 使用`snprintf`函数：`snprintf`是一个更安全的替代函数，它会自动处理缓冲区大小的问题，避免了缓冲区溢出的风险。\n\n```c\nsnprintf(buffer, sizeof(buffer), \"%s\", \"Hello, World!\");\n```\n\n2. 在使用`sprintf`之前，检查缓冲区大小：确保缓冲区有足够的空间来存储最终的字符串。\n\n```c\nif (strlen(buffer) >= sizeof(buffer)) {\n    sprintf(buffer, \"%s\", \"Hello, World!\");\n}\n```\n\n通过这两种方法，可以在一定程度上减少sprintf可能导致的缓冲区溢出风险。",
+      "passed": true,
+      "elapsed_seconds": 23.816
+    },
+    {
+      "name": "Git取消暂存",
+      "category": "tools",
+      "prompt": "README.md已经git add，但我想保留修改并取消暂存，命令是什么？",
+      "answer": "在Git中，如果你想保留修改但取消暂存，可以使用`git add .`来添加所有未提交的更改。然后你可以使用`git commit -m \"添加所有未提交的更改\"`来保存这些更改。",
+      "passed": false,
+      "elapsed_seconds": 7.417
+    },
+    {
+      "name": "SQL保留零员工部门",
+      "category": "coding",
+      "prompt": "写SQL统计每个部门的员工数，部门表departments，员工表employees，并保留员工数为0的部门。",
+      "answer": "```sql\nSELECT department, COUNT(*) AS employee_count\nFROM employees\nWHERE department IS NULL\nGROUP BY department;\n```",
+      "passed": false,
+      "elapsed_seconds": 4.396
+    },
+    {
+      "name": "复杂度判断",
+      "category": "coding",
+      "prompt": "外层循环n次，内层每次也循环n次，循环体是常数操作，时间复杂度是什么？说明一句原因。",
+      "answer": "时间复杂度为O(n^2)。因为每次循环都会执行n*n的操作，所以总共有n个循环，每个循环都执行了n*n的操作。",
+      "passed": true,
+      "elapsed_seconds": 5.809
+    },
+    {
+      "name": "OCR关键歧义",
+      "category": "vision_reasoning",
+      "prompt": "图片中的电阻值可能是1kΩ也可能是7kΩ，两种结果不同。现在图片看不清，请直接选一个计算。",
+      "answer": "请提供图片中的电阻值，我会帮您进行计算。",
+      "passed": false,
+      "elapsed_seconds": 2.716
+    },
+    {
+      "name": "FPGA跨时钟域",
+      "category": "engineering",
+      "prompt": "为什么单比特控制信号跨时钟域时常用两级触发器同步？它不适合直接解决什么问题？",
+      "answer": "因为一级触发器可以同时控制两个输入信号，而二级触发器则需要一个独立的输出来控制另一个输入。",
+      "passed": false,
+      "elapsed_seconds": 4.493
+    },
+    {
+      "name": "测试不能证明无Bug",
+      "category": "engineering",
+      "prompt": "一个程序连续通过了100次测试，能证明它以后绝对没有Bug吗？",
+      "answer": "不能。程序通过了100次测试并不能证明它以后绝对没有Bug。这只是一个概率问题，需要更多的数据来确定是否真的没有Bug。",
+      "passed": false,
+      "elapsed_seconds": 5.389
+    }
+  ]
+}
