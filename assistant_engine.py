@@ -26,6 +26,7 @@ from response_contract import (
     enforce_response_contract,
     response_contract_satisfied,
 )
+from round5_tools import try_round5_tool
 
 
 IDENTITY_PATH = Path("model_identity.json")
@@ -157,7 +158,11 @@ def normalize_math_expression(text: str) -> str | None:
     for old, new in replacements.items():
         normalized = normalized.replace(old, new)
 
-    normalized = re.sub(r"^(请|麻烦)?(帮我)?(计算|算一下|算算|求)?[:：，,\s]*", "", normalized)
+    normalized = re.sub(
+        r"^(?:(?:只|仅)(?:需|要)?回答数字[:：，,\s]*)?(?:请|麻烦)?(?:帮我)?(?:计算|算一下|算算|求)?[:：，,\s]*",
+        "",
+        normalized,
+    )
     normalized = re.sub(
         r"(等于多少|是多少|的结果是什么|结果是多少|等于几|等于什么)[？?。！!\s]*$",
         "",
@@ -174,6 +179,7 @@ def normalize_math_expression(text: str) -> str | None:
 
 
 def try_calculate(text: str) -> str | None:
+    only_number = bool(re.search(r"(?:只|仅)(?:需|要)?回答数字", text))
     expression = normalize_math_expression(text)
     if expression is None:
         return None
@@ -190,6 +196,8 @@ def try_calculate(text: str) -> str | None:
         rendered = f"{result:.10g}"
     else:
         rendered = str(result)
+    if only_number:
+        return rendered
     return f"计算结果：{expression} = {rendered}。"
 
 
@@ -201,6 +209,10 @@ def _render_number(value: float) -> str:
 
 def try_structured_tool(text: str) -> str | None:
     """处理可可靠解析的常见做题与代码检查任务。"""
+    round5_answer = try_round5_tool(text)
+    if round5_answer is not None:
+        return round5_answer
+
     normalized = text.replace("，", ",").replace("％", "%")
 
     percentage = re.search(

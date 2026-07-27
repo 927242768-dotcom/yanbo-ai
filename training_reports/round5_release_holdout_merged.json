@@ -1,0 +1,43 @@
+{
+  "report_name": "彦博-v3第5轮发布留出集合并报告",
+  "date": "2026-07-27",
+  "adapter": "adapters\\yanbo-v3-compat-lora",
+  "adapter_step": 700,
+  "execution": "engine",
+  "engine_backend": "native",
+  "suite_total": 28,
+  "evaluated": 28,
+  "missing_indices": [],
+  "duplicate_indices": [],
+  "passed": 28,
+  "total": 28,
+  "score": 1.0,
+  "current_compatibility_backend_regression": {
+    "date": "2026-07-27",
+    "passed": 28,
+    "total": 28,
+    "score": 1.0
+  },
+  "categories": {
+    "coding": {"passed": 1, "total": 1},
+    "electronics": {"passed": 9, "total": 9},
+    "embedded": {"passed": 3, "total": 3},
+    "engineering": {"passed": 2, "total": 2},
+    "grounding": {"passed": 3, "total": 3},
+    "instruction": {"passed": 3, "total": 3},
+    "math": {"passed": 5, "total": 5},
+    "tools": {"passed": 1, "total": 1},
+    "writing": {"passed": 1, "total": 1}
+  },
+  "source_reports": [
+    {"path": "training_reports/round5_release_holdout_part1_final.json", "indices": [0, 2], "passed": 3, "total": 3},
+    {"path": "training_reports/round5_release_holdout_part2_final.json", "indices": [3, 27], "passed": 25, "total": 25}
+  ],
+  "integrity_check": {
+    "index_range": [0, 27],
+    "coverage_complete": true,
+    "no_missing_indices": true,
+    "no_duplicate_indices": true,
+    "all_source_results_passed": true
+  }
+}

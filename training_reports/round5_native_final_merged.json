@@ -1,0 +1,54 @@
+{
+  "report_name": "彦博-v3第5轮正式原生引擎评测合并报告",
+  "date": "2026-07-27",
+  "adapter": "adapters\\yanbo-v3-compat-lora",
+  "adapter_step": 700,
+  "execution": "engine",
+  "engine_backend": "native",
+  "suite_total": 60,
+  "evaluated": 60,
+  "missing_indices": [],
+  "duplicate_indices": [],
+  "passed": 60,
+  "total": 60,
+  "score": 1.0,
+  "current_compatibility_backend_regression": {
+    "date": "2026-07-27",
+    "segments": [[0, 14], [15, 29], [30, 44], [45, 59]],
+    "passed": 60,
+    "total": 60,
+    "score": 1.0
+  },
+  "baseline": {
+    "passed": 52,
+    "total": 60,
+    "score": 0.8667
+  },
+  "categories": {
+    "coding": {"passed": 8, "total": 8},
+    "electronics": {"passed": 12, "total": 12},
+    "engineering": {"passed": 2, "total": 2},
+    "grounding": {"passed": 6, "total": 6},
+    "instruction": {"passed": 8, "total": 8},
+    "logic": {"passed": 4, "total": 4},
+    "quantitative": {"passed": 14, "total": 14},
+    "tools": {"passed": 4, "total": 4},
+    "writing": {"passed": 2, "total": 2}
+  },
+  "source_reports": [
+    {"path": "training_reports/round5_native_final_part1.json", "indices": [0, 9], "passed": 10, "total": 10},
+    {"path": "training_reports/round5_native_final_part2.json", "indices": [10, 19], "passed": 10, "total": 10},
+    {"path": "training_reports/round5_native_final_part3.json", "indices": [20, 29], "passed": 10, "total": 10},
+    {"path": "training_reports/round5_native_final_part4.json", "indices": [30, 39], "passed": 10, "total": 10},
+    {"path": "training_reports/round5_native_final_part5_tools.json", "indices": [40, 53], "passed": 14, "total": 14},
+    {"path": "training_reports/round5_native_final_part6.json", "indices": [54, 59], "passed": 6, "total": 6}
+  ],
+  "integrity_check": {
+    "index_range": [0, 59],
+    "coverage_complete": true,
+    "no_missing_indices": true,
+    "no_duplicate_indices": true,
+    "all_source_results_passed": true
+  },
+  "note": "本文件由已完成的正式原生评测分片汇总。2026-07-27再次加载20.9B正式模型时，CPU路径因约10.15GB CPU_REPACK额外分配失败，Vulkan和ROCm路径因当前AMD驱动异常退出，因此未伪造新的整套原生运行结果。"
+}

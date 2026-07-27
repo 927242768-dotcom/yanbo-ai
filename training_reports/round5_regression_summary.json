@@ -1,0 +1,58 @@
+{
+  "report_name": "彦博-v3第5轮当前代码回归摘要",
+  "date": "2026-07-27",
+  "deterministic_suite": {
+    "passed": 39,
+    "total": 39,
+    "score": 1.0
+  },
+  "round5_robustness_compatibility_backend": {
+    "segments": [
+      {"indices": [0, 14], "passed": 15, "total": 15},
+      {"indices": [15, 29], "passed": 15, "total": 15},
+      {"indices": [30, 44], "passed": 15, "total": 15},
+      {"indices": [45, 59], "passed": 15, "total": 15}
+    ],
+    "passed": 60,
+    "total": 60,
+    "score": 1.0
+  },
+  "round5_release_holdout_compatibility_backend": {
+    "passed": 28,
+    "total": 28,
+    "score": 1.0
+  },
+  "round4_release_holdout_compatibility_backend": {
+    "first_half": {"indices": [0, 13], "passed": 14, "total": 14},
+    "second_half": {"indices": [14, 27], "passed": 14, "total": 14},
+    "passed": 28,
+    "total": 28,
+    "score": 1.0
+  },
+  "fixed_regression": {
+    "name": "拒绝伪造文献",
+    "cause": "第5轮证据边界先于旧规则执行，并把论文、实验数据错误路由到器件数据手册模板。",
+    "resolution": "将学术证据、官方技术资料和通用证据拆成独立路由，并增加双向防串线回归。",
+    "passed": true
+  },
+  "additional_hardening": [
+    "可变默认集合",
+    "释放后使用",
+    "父子表空组统计",
+    "肯定后件",
+    "多比特总线跨时钟域",
+    "异步复位同步释放",
+    "专业改写",
+    "缺失波形证据",
+    "小时分钟路程换算",
+    "固定两句话格式修复",
+    "短标题直接输出",
+    "合法JSON指定键值输出",
+    "只输出恰好N项格式解析",
+    "只回答数字复杂算式",
+    "连续折扣总折扣",
+    "分秒路程换算",
+    "KiB二进制换算",
+    "十六进制转换"
+  ]
+}

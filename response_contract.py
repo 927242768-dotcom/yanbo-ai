@@ -55,6 +55,7 @@ class ResponseContract:
         if self.exact_items is not None:
             rules.append(
                 f"必须恰好输出{self.exact_items}项；使用清晰编号；每项必须包含具体、完整的正文，"
+                f"但默认保持简洁，通常一项一句且不超过40个汉字，优先保证全部{self.exact_items}项完整输出；"
                 f"不得只写序号；不得增加前言、总结或第{self.exact_items + 1}项。"
             )
         if self.exact_sentences is not None:
@@ -113,7 +114,7 @@ def analyze_response_contract(text: str) -> ResponseContract:
 
     item_count = _first_number(
         [
-            rf"(?:只|仅|请)?\s*(?:给我|给出|列出|提供|写出|生成|总结出|说明)\s*(?:恰好|正好|只能|必须)?\s*(?P<count>{_NUMBER})\s*(?:个|条|点|项|种|阶段|步骤|标题|建议|办法|原因|例子|要点|方案)",
+            rf"(?:只|仅|请)?\s*(?:给我|给出|列出|提供|写出|输出|生成|总结出|说明)\s*(?:恰好|正好|只能|必须)?\s*(?P<count>{_NUMBER})\s*(?:个|条|点|项|种|阶段|步骤|标题|建议|办法|原因|例子|要点|方案)",
             rf"(?P<count>{_NUMBER})\s*(?:个|条|点|项|种)?\s*[^，。！？!?]{{0,12}}(?:建议|办法|原因|例子|要点|方案)",
             rf"(?P<count>{_NUMBER})\s*(?:个|条|点|项|种)?\s*(?:阶段|步骤|标题)",
         ],
@@ -214,6 +215,26 @@ def _trim_sentences(text: str, count: int) -> str:
     ]
     if len(clauses) >= count:
         return "".join(f"{clause}。" for clause in clauses[:count])
+
+    # 固定要求两句话时，小模型偶尔会把两个完整观点用“，而/，同时”连接成一句。
+    # 优先按强连接词拆分；若仍无法拆分，再选择最接近中点且两侧都有实质内容的逗号。
+    if count == 2:
+        value = text.strip().rstrip("。！？!?")
+        strong = re.search(r"[，,]\s*(?:而|同时|另外|并且|且)\s*", value)
+        if strong:
+            left = value[: strong.start()].strip()
+            right = value[strong.end():].strip()
+            if len(left) >= 4 and len(right) >= 4:
+                return f"{left}。{right}。"
+
+        commas = [match for match in re.finditer(r"[，,]", value)]
+        if commas:
+            midpoint = len(value) / 2
+            for match in sorted(commas, key=lambda item: abs(item.start() - midpoint)):
+                left = value[: match.start()].strip()
+                right = value[match.end():].strip()
+                if len(left) >= 4 and len(right) >= 4:
+                    return f"{left}。{right}。"
     return text.strip()
 
 
